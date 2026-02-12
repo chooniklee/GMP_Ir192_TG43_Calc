@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GammaMed Plus Ir-192 TG-43 Calc</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- dcmjs Library -->
+    <script src="https://unpkg.com/dcmjs"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+        
+        /* Table Styles */
+        .table-tight td, .table-tight th { padding: 4px 6px; font-size: 0.75rem; border: 1px solid #e2e8f0; }
+        
+        .sidebar-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white; }
+        
+        .sidebar-table th { background-color: #f8fafc; text-transform: none; font-size: 10px; color: #64748b; padding: 6px; border-bottom: 1px solid #e2e8f0; }
+        
+        .sidebar-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; }
+        
+        /* Results Table Header */
+        #results-table th { background-color: #f8fafc; text-transform: none; font-size: 10px; color: #64748b; padding: 6px; border-bottom: 1px solid #e2e8f0; }
+
+        /* Data View Tables */
+        .data-view-table { border-collapse: collapse; font-size: 0.7rem; }
+        .data-view-table th, .data-view-table td { border: 1px solid #e2e8f0; padding: 4px; text-align: center; }
+        .data-view-table th { background-color: #f1f5f9; font-weight: bold; color: #475569; position: sticky; top: 0; }
+        
+        /* Input Styling within sidebar */
+        .side-input { width: 100%; padding: 2px 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; text-align: center; transition: all 0.2s; background-color: #fff; }
+        .side-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
+
+        /* Table Input Styling (Always visible text box) */
+        .table-input { 
+            width: 100%; padding: 4px; border: 1px solid #cbd5e1; background-color: #ffffff; 
+            text-align: center; font-weight: 500; border-radius: 4px; transition: all 0.2s; 
+            -moz-appearance: textfield; 
+        }
+        .table-input::-webkit-outer-spin-button,
+        .table-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .table-input:hover { border-color: #94a3b8; background-color: #f8fafc; }
+        .table-input:focus { border-color: #3b82f6; background-color: white; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
+        
+        .btn-active { background-color: #2563eb !important; color: white !important; border-color: #2563eb !important; }
+        .toggle-active { background-color: #8b5cf6 !important; color: white !important; border-color: #8b5cf6 !important; }
+        
+        .scroll-area-table { height: 200px; overflow-y: auto; }
+        .sidebar-scroll { height: calc(100vh - 110px); overflow-y: auto; }
+        
+        /* Drop Zone */
+        .drop-zone { border: 2px dashed #cbd5e1; transition: all 0.3s; }
+        .drop-zone.dragover { border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.05); }
+
+        /* Tooltip Style (Horizontal Transposed Table) */
+        #channel-tooltip {
+            position: fixed;
+            z-index: 1000;
+            pointer-events: none;
+            background: white;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px; /* Tooltip font set to 13px */
+            display: none;
+            max-width: 80vw;
+            max-height: 400px;
+            overflow-x: auto;
+        }
+
+        /* Utility */
+        .hidden-canvas { display: none !important; }
+        .bg-pattern { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Header / Global Actions -->
+    <div class="bg-white border-b px-4 py-3 flex items-center justify-between shadow-sm z-10 h-[60px]">
+        <h1 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+            <span class="text-red-600 text-xl">☢</span> 
+            <span>GammaMed Plus <sup class="text-gray-500 font-medium">192</sup>Ir TG-43U Physics Check</span>
+        </h1>
+        
+        <div class="flex gap-2">
+            <button id="btn-view-data" class="px-3 py-1.5 bg-white text-slate-600 border border-slate-200 rounded-lg text-sm font-bold hover:bg-slate-50 transition flex items-center gap-2 shadow-sm">
+                View TG43U Data
+            </button>
+
+            <button id="btn-clear" class="px-3 py-1.5 bg-white text-red-500 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-50 transition flex items-center gap-2">
+                Reset
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-grow overflow-hidden relative">
+        
+        <!-- CALCULATOR VIEW -->
+        <div id="calculator-view" class="flex h-full w-full">
+            <!-- Sidebar -->
+            <div id="sidebar-container" class="w-[360px] flex-none bg-slate-50 border-r flex flex-col z-20">
+                
+                <!-- Mode Tabs -->
+                <div class="grid grid-cols-2 bg-white border-b shadow-sm shrink-0">
+                    <button id="tab-manual" class="py-3 text-xs font-bold uppercase border-b-2 border-blue-600 text-blue-600 transition-colors">
+                        Manual 2D
+                    </button>
+                    <button id="tab-dicom" class="py-3 text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors">
+                        DICOM Import
+                    </button>
+                </div>
+
+                <!-- Scrollable Content Area -->
+                <div class="flex-grow overflow-y-auto p-4 space-y-4 sidebar-scroll relative">
+                    
+                    <!-- MANUAL MODE PANEL -->
+                    <div id="panel-manual" class="space-y-4">
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="btn-dwell" class="flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-red-500 bg-red-500 text-white shadow-md hover:shadow-lg transition-all group active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                                <span class="text-xs font-bold uppercase">Add Dwell</span>
+                            </button>
+                            <button id="btn-poi" class="flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-slate-200 bg-white text-slate-600 shadow-sm hover:shadow-md transition-all group active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                <span class="text-xs font-bold uppercase">Add POI</span>
+                            </button>
+                        </div>
+
+                        <!-- Manual Settings -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase block">S<sub>k</sub> (U)</label>
+                                    <div class="relative">
+                                        <input type="number" id="sk-val" value="40700" class="w-full pl-2 pr-2 py-1.5 text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:border-blue-500 outline-none text-center">
+                                    </div>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase block">Default Dwell(s)</label>
+                                    <div class="relative">
+                                        <input type="number" id="dwell-time" value="10" class="w-full pl-2 pr-2 py-1.5 text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:border-blue-500 outline-none text-center">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Manual Dwell Info -->
+                        <section>
+                            <div class="flex items-center justify-between mb-2 px-1">
+                                <h3 class="text-[11px] font-bold text-slate-500 uppercase flex items-center gap-2">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div> Manual Source Info
+                                </h3>
+                                <span class="text-[10px] bg-slate-200 px-2 py-0.5 rounded-full text-slate-600 font-bold" id="dwell-count">0</span>
+                            </div>
+                            <table class="sidebar-table shadow-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="w-10 text-center">ID</th>
+                                        <th class="w-14 text-center">X(cm)</th>
+                                        <th class="w-14 text-center">Y(cm)</th>
+                                        <th class="w-14 text-center">Z(cm)</th>
+                                        <th class="text-center">Time(s)</th>
+                                        <th class="w-8"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dwell-table-body"></tbody>
+                            </table>
+                        </section>
+
+                        <!-- Points of Interest Info -->
+                        <section>
+                            <div class="flex items-center justify-between mb-2 px-1">
+                                <h3 class="text-[11px] font-bold text-slate-500 uppercase flex items-center gap-2">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-600"></div> Points of Interest
+                                </h3>
+                                <span class="text-[10px] bg-blue-100 px-2 py-0.5 rounded-full text-blue-700 font-bold" id="poi-count">0</span>
+                            </div>
+                            <table class="sidebar-table shadow-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="w-10 text-center">ID</th>
+                                        <th class="w-14 text-center">X(cm)</th>
+                                        <th class="w-14 text-center">Y(cm)</th>
+                                        <th class="w-14 text-center">Z(cm)</th>
+                                        <th class="text-center">Dose(Gy)</th>
+                                        <th class="w-8"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="poi-table-body"></tbody>
+                            </table>
+                        </section>
+                    </div>
+
+                    <!-- DICOM MODE PANEL -->
+                    <div id="panel-dicom" class="hidden space-y-4">
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-4">
+                            <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                                Select DICOM RT Plan
+                            </h3>
+                            <div id="drop-zone" class="drop-zone w-full h-32 rounded-lg flex flex-col items-center justify-center text-center p-4 cursor-pointer">
+                                <p class="text-xs text-slate-500 font-medium">Drag & Drop DICOM RT file here</p>
+                                <p class="text-[10px] text-slate-400 mt-1">or click to browse</p>
+                                <input type="file" id="dicom-file" class="hidden" accept=".dcm,application/dicom">
+                            </div>
+                            <div id="dicom-status" class="hidden p-3 rounded bg-slate-100 text-[10px] font-mono break-all border border-slate-200"></div>
+                        </div>
+
+                        <section>
+                            <h3 class="text-[11px] font-bold text-slate-500 uppercase flex items-center gap-2 mb-2 px-1">
+                                <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> Channels Summary
+                            </h3>
+                            <div class="overflow-x-auto rounded-lg border border-slate-200">
+                                <table class="sidebar-table w-full">
+                                    <thead>
+                                        <tr>
+                                            <th>Ch#</th>
+                                            <th>Dwells</th>
+                                            <th>Total Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dicom-channel-body" class="text-[13px]">
+                                        <tr><td colspan="3" class="text-center text-xs text-slate-400 py-4">No Data</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Canvas & Results -->
+            <div class="flex-grow flex flex-col relative bg-white min-w-0">
+                <!-- Canvas Area -->
+                <div id="canvas-container" class="relative flex-grow border-b overflow-hidden bg-yellow-50">
+                    <canvas id="mainCanvas"></canvas>
+                    
+                    <div class="absolute top-4 left-4 z-10 flex flex-col gap-2 items-start">
+                        <div class="bg-white/95 border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm backdrop-blur-sm font-bold text-xs text-slate-600 pointer-events-none flex items-center gap-3">
+                            <div class="flex items-center gap-1.5">
+                                <svg width="24" height="12" viewBox="0 0 24 12" class="text-red-500">
+                                    <line x1="8" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" />
+                                    <path d="M8 2 L0 6 L8 10 Z" fill="currentColor" />
+                                </svg>
+                                <span>Source (XY Proj)</span>
+                            </div>
+                            <div class="w-px h-3 bg-slate-200"></div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+                                <span>POI</span>
+                            </div>
+                        </div>
+
+                        <button id="btn-contour" class="px-3 py-1.5 bg-white/95 text-teal-600 border border-teal-200 rounded-lg shadow-sm text-xs font-bold hover:bg-teal-50 transition flex items-center gap-2 pointer-events-auto shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 20 0z"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/><path d="M12 2a15.3 15.3 0 0 0-4 10 15.3 15.3 0 0 0 4 10"/></svg>
+                            Show Isodose Lines
+                        </button>
+                    </div>
+
+                    <div class="absolute bottom-4 left-4 bg-white/90 border border-slate-200 px-2 py-1 rounded-md text-[10px] text-slate-500 shadow-sm pointer-events-none font-medium z-10">
+                        Scroll: Zoom • Middle: Pan • Click: Add Point (Manual)
+                    </div>
+                </div>
+
+                <!-- DICOM Result View -->
+                <div id="dicom-result-panel" class="hidden flex-grow flex flex-col p-6 bg-slate-50 overflow-auto bg-pattern">
+                    <div class="max-w-6xl mx-auto w-full space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="space-y-1">
+                                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                                    Reference Points Calculation
+                                </h2>
+                                <div class="flex items-center gap-6 py-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[12px] font-bold text-slate-400 uppercase">S<sub>k</sub> (U):</span>
+                                        <input type="number" id="dicom-sk-val" value="40700" class="w-24 px-2 py-0.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded focus:border-blue-500 outline-none text-center">
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[12px] font-bold text-slate-400 uppercase">Fractions:</span>
+                                        <input type="number" id="dicom-fractions" value="1" min="1" step="1" class="w-16 px-2 py-0.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded focus:border-blue-500 outline-none text-center">
+                                    </div>
+                                    <div class="flex items-center gap-2 border-l pl-6 border-slate-200">
+                                        <span class="text-[12px] font-bold text-slate-400 uppercase">POSITION:</span>
+                                        <select id="dicom-position" class="text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded py-0.5 px-1 outline-none focus:border-blue-500">
+                                            <option value="HFS">HFS</option>
+                                            <option value="FFS">FFS</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="btn-dicom-copy" class="px-3 py-1.5 bg-slate-800 text-white border border-slate-800 rounded-md text-xs font-bold hover:bg-slate-700 transition flex items-center gap-1.5 shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="16" x2="16" y1="8" y2="16"/><line x1="8" x2="8" y1="8" y2="16"/><line x1="3" x2="21" y1="12" y2="12"/></svg>
+                                    Copy to Clipboard
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                             <table class="w-full text-left border-collapse text-[13px]" id="dicom-results-table">
+                                <thead class="bg-slate-50 text-slate-600 text-xs font-bold">
+                                    <tr id="dicom-header-row">
+                                        <th class="p-3 border-b">POI Name</th>
+                                        <th class="p-3 border-b text-center">X (cm)</th>
+                                        <th class="p-3 border-b text-center">Y (cm)</th>
+                                        <th class="p-3 border-b text-center">Z (cm)</th>
+                                        <th class="p-3 border-b text-center">TPS Dose (Gy)</th>
+                                        <th class="p-3 border-b text-center bg-blue-50/50">Calc Fx Dose (Gy)</th>
+                                        <th class="p-3 border-b text-center bg-blue-100/50">Calc Total (Gy)</th>
+                                        <th class="p-3 border-b text-right">Diff %</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dicom-main-table-body" class="divide-y divide-slate-100">
+                                    <tr><td colspan="8" class="p-6 text-center text-slate-400">No Reference Points found or file not loaded</td></tr>
+                                </tbody>
+                             </table>
+                        </div>
+                        <div class="px-2 text-[10px] text-slate-400 italic">
+                            * Note: TPS Dose values are automatically retrieved from the DICOM RT Plan's 'Dose Reference Sequence'. If a value is missing ('-'), it indicates the data was not defined for that specific Reference Point in the imported file.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual Result View -->
+                <div id="manual-result-panel" class="bg-white p-4 shrink-0 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.05)] z-20">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-xs font-bold uppercase text-slate-500 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                                Calculation Results
+                            </h2>
+                            <button id="btn-copy" class="px-2 py-1 bg-slate-800 text-white border border-slate-800 rounded-md text-[12px] font-bold hover:bg-slate-700 transition flex items-center gap-1.5 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="16" x2="16" y1="8" y2="16"/><line x1="8" x2="8" y1="8" y2="16"/><line x1="3" x2="21" y1="12" y2="12"/></svg>
+                                Copy to Clipboard
+                            </button>
+                        </div>
+                        <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+                            <button id="btn-simple" class="text-[12px] px-3 py-1 rounded-md transition font-bold btn-active">Summary</button>
+                            <button id="btn-detailed" class="text-[12px] px-3 py-1 rounded-md transition font-bold text-slate-500 hover:text-slate-800">TG-43 Detail</button>
+                        </div>
+                    </div>
+                    <div class="scroll-area-table border border-slate-200 rounded-lg bg-white">
+                        <table class="w-full table-tight text-left border-collapse" id="results-table">
+                            <thead class="sticky top-0 shadow-sm z-10"></thead>
+                            <tbody id="results-body" class="text-[13px]"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TG-43 Data View (Hidden) -->
+        <div id="tg43-data-view" class="hidden h-full w-full bg-slate-50 overflow-auto p-8">
+            <div class="max-w-6xl mx-auto space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+                            <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div> Radial Dose Function g<sub>L</sub>(r)
+                        </h2>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                            <table class="data-view-table w-full">
+                                <thead class="bg-slate-50"><tr><th class="p-3">r (cm)</th><th class="p-3">g<sub>L</sub>(r)</th></tr></thead>
+                                <tbody id="table-gl-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <div class="w-1.5 h-6 bg-purple-600 rounded-full"></div> Anisotropy Function F(r, θ)
+                    </h2>
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-auto max-h-[500px]">
+                        <table class="data-view-table w-full" id="table-f"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hover Tooltip Container -->
+    <div id="channel-tooltip"></div>
+
+    <script>
+        /** TG-43 DATA TABLES **/
+        const EFFECTIVE_L = 0.35; 
+        const doseRateConstant = 1.1165; 
+        
+        const gL_data = [
+            { r: 0.00, val: 0.998 }, { r: 0.20, val: 0.998 }, { r: 0.25, val: 0.997 },
+            { r: 0.50, val: 0.996 }, { r: 0.75, val: 0.998 }, { r: 1.00, val: 1.000 },
+            { r: 1.50, val: 1.003 }, { r: 2.00, val: 1.006 }, { r: 3.00, val: 1.006 },
+            { r: 4.00, val: 1.004 }, { r: 5.00, val: 0.999 }, { r: 6.00, val: 0.993 },
+            { r: 8.00, val: 0.968 }, { r: 10.0, val: 0.935 }
+        ];
+
+        const r_headers = [0, 0.2, 0.4, 0.6, 0.8, 1, 1.25, 1.5, 1.75, 2, 2.5, 3, 3.5, 4, 5, 6, 8, 10];
+        const theta_rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 165, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180];
+        
+        const F_table = [
+            [0.695, 0.695, 0.666, 0.636, 0.630, 0.608, 0.615, 0.634, 0.625, 0.629, 0.648, 0.654, 0.660, 0.683, 0.702, 0.716, 0.758, 0.789],
+            [0.711, 0.711, 0.677, 0.643, 0.632, 0.609, 0.614, 0.632, 0.626, 0.633, 0.656, 0.667, 0.676, 0.698, 0.716, 0.727, 0.762, 0.786],
+            [0.715, 0.715, 0.684, 0.653, 0.640, 0.620, 0.624, 0.638, 0.634, 0.641, 0.661, 0.671, 0.679, 0.697, 0.717, 0.730, 0.764, 0.794],
+            [0.708, 0.708, 0.684, 0.660, 0.650, 0.634, 0.637, 0.647, 0.646, 0.653, 0.671, 0.682, 0.691, 0.705, 0.726, 0.739, 0.771, 0.798],
+            [0.736, 0.736, 0.701, 0.666, 0.654, 0.645, 0.652, 0.662, 0.663, 0.668, 0.680, 0.690, 0.697, 0.711, 0.736, 0.750, 0.779, 0.805],
+            [0.728, 0.728, 0.706, 0.684, 0.673, 0.664, 0.668, 0.674, 0.676, 0.682, 0.693, 0.704, 0.712, 0.724, 0.748, 0.762, 0.788, 0.811],
+            [0.722, 0.722, 0.709, 0.696, 0.688, 0.681, 0.683, 0.686, 0.691, 0.697, 0.707, 0.718, 0.725, 0.734, 0.757, 0.770, 0.795, 0.817],
+            [0.736, 0.736, 0.720, 0.705, 0.697, 0.692, 0.697, 0.700, 0.707, 0.712, 0.719, 0.729, 0.736, 0.745, 0.769, 0.780, 0.823],
+            [0.732, 0.732, 0.726, 0.720, 0.715, 0.712, 0.713, 0.713, 0.719, 0.724, 0.731, 0.743, 0.751, 0.758, 0.779, 0.789, 0.810, 0.830],
+            [0.744, 0.744, 0.738, 0.733, 0.729, 0.726, 0.728, 0.727, 0.734, 0.738, 0.743, 0.754, 0.762, 0.769, 0.790, 0.799, 0.818, 0.837],
+            [0.762, 0.762, 0.753, 0.743, 0.738, 0.738, 0.741, 0.740, 0.748, 0.752, 0.755, 0.765, 0.772, 0.778, 0.799, 0.808, 0.826, 0.844],
+            [0.837, 0.837, 0.820, 0.803, 0.801, 0.802, 0.804, 0.802, 0.809, 0.811, 0.813, 0.821, 0.828, 0.829, 0.844, 0.848, 0.863, 0.873],
+            [0.962, 0.962, 0.866, 0.855, 0.854, 0.852, 0.853, 0.852, 0.858, 0.858, 0.862, 0.865, 0.870, 0.869, 0.878, 0.880, 0.893, 0.900],
+            [0.968, 0.968, 0.923, 0.917, 0.916, 0.912, 0.913, 0.912, 0.918, 0.918, 0.921, 0.923, 0.923, 0.927, 0.930, 0.933, 0.939],
+            [0.979, 0.979, 0.956, 0.951, 0.952, 0.948, 0.949, 0.946, 0.950, 0.951, 0.950, 0.953, 0.955, 0.954, 0.958, 0.958, 0.959, 0.963],
+            [0.987, 0.987, 0.977, 0.973, 0.973, 0.971, 0.972, 0.971, 0.972, 0.973, 0.973, 0.974, 0.975, 0.974, 0.977, 0.976, 0.978, 0.978],
+            [0.993, 0.993, 0.987, 0.984, 0.985, 0.985, 0.987, 0.985, 0.987, 0.988, 0.989, 0.989, 0.988, 0.988, 0.989, 0.988, 0.988, 0.988],
+            [0.994, 0.994, 0.995, 0.994, 0.994, 0.995, 0.996, 0.993, 0.996, 0.996, 0.996, 0.996, 0.996, 1.000, 0.999, 0.995, 0.995, 0.996],
+            [0.998, 0.998, 0.999, 0.999, 0.998, 0.999, 1.000, 0.998, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 0.999, 0.999, 0.999, 0.999],
+            [1.000, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            [1.000, 1.0, 0.999, 0.999, 0.999, 0.999, 0.998, 0.998, 0.998, 0.998, 0.999, 0.999, 0.999, 0.999, 1.000, 0.999, 1.000, 0.9989],
+            [0.998, 0.998, 0.996, 0.994, 0.995, 0.995, 0.995, 0.993, 0.995, 0.994, 0.995, 0.995, 0.995, 0.995, 0.995, 0.994, 0.995, 0.9949],
+            [0.998, 0.998, 0.990, 0.985, 0.984, 0.985, 0.986, 0.984, 0.987, 0.987, 0.987, 0.987, 0.988, 0.989, 0.987, 0.989, 0.9890],
+            [0.994, 0.994, 0.976, 0.973, 0.971, 0.972, 0.972, 0.970, 0.972, 0.973, 0.974, 0.974, 0.974, 0.975, 0.976, 0.977, 0.977, 0.9790],
+            [0.991, 0.991, 0.958, 0.950, 0.947, 0.948, 0.947, 0.947, 0.949, 0.950, 0.952, 0.953, 0.954, 0.953, 0.956, 0.958, 0.959, 0.9624],
+            [0.973, 0.973, 0.923, 0.914, 0.914, 0.914, 0.914, 0.912, 0.915, 0.916, 0.917, 0.919, 0.921, 0.920, 0.925, 0.927, 0.931, 0.9347],
+            [0.966, 0.966, 0.873, 0.851, 0.850, 0.847, 0.850, 0.848, 0.853, 0.856, 0.857, 0.863, 0.867, 0.870, 0.876, 0.878, 0.889, 0.8954],
+            [0.828, 0.828, 0.814, 0.801, 0.798, 0.796, 0.798, 0.801, 0.802, 0.806, 0.809, 0.818, 0.822, 0.829, 0.838, 0.843, 0.860, 0.8700],
+            [0.789, 0.789, 0.756, 0.723, 0.720, 0.725, 0.725, 0.729, 0.730, 0.734, 0.743, 0.754, 0.761, 0.771, 0.784, 0.795, 0.819, 0.8311],
+            [0.730, 0.730, 0.715, 0.700, 0.699, 0.706, 0.706, 0.710, 0.712, 0.716, 0.725, 0.735, 0.744, 0.755, 0.768, 0.782, 0.809, 0.8221],
+            [0.722, 0.722, 0.699, 0.676, 0.686, 0.686, 0.689, 0.692, 0.696, 0.705, 0.716, 0.725, 0.738, 0.752, 0.768, 0.798, 0.8114],
+            [0.627, 0.627, 0.635, 0.642, 0.649, 0.664, 0.663, 0.666, 0.671, 0.675, 0.684, 0.695, 0.705, 0.719, 0.735, 0.752, 0.785, 0.7990],
+            [0.574, 0.574, 0.596, 0.618, 0.640, 0.643, 0.641, 0.643, 0.650, 0.653, 0.662, 0.672, 0.684, 0.698, 0.715, 0.733, 0.769, 0.7840],
+            [0.627, 0.627, 0.623, 0.619, 0.615, 0.611, 0.615, 0.616, 0.625, 0.627, 0.636, 0.646, 0.659, 0.674, 0.692, 0.713, 0.752, 0.769],
+            [0.710, 0.710, 0.674, 0.638, 0.602, 0.566, 0.568, 0.585, 0.597, 0.598, 0.608, 0.618, 0.632, 0.645, 0.666, 0.688, 0.731, 0.750],
+            [0.450, 0.450, 0.459, 0.467, 0.476, 0.485, 0.496, 0.507, 0.518, 0.529, 0.521, 0.533, 0.553, 0.560, 0.591, 0.620, 0.672, 0.702],
+            [0.329, 0.329, 0.340, 0.350, 0.361, 0.371, 0.384, 0.397, 0.410, 0.423, 0.449, 0.475, 0.501, 0.527, 0.548, 0.572, 0.621, 0.659],
+            [0.417, 0.417, 0.421, 0.426, 0.430, 0.434, 0.440, 0.445, 0.451, 0.456, 0.467, 0.478, 0.489, 0.501, 0.523, 0.545, 0.589, 0.633]
+        ];
+
+        /** PHYSICS ENGINE **/
+        function linearInterp(x, x0, y0, x1, y1) {
+            if (x0 === x1) return y0;
+            return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
+        }
+
+        function get_gL(r) {
+            if (r <= gL_data[0].r) return gL_data[0].val;
+            if (r >= gL_data[gL_data.length-1].r) return gL_data[gL_data.length-1].val;
+            for (let i = 0; i < gL_data.length - 1; i++) {
+                if (r >= gL_data[i].r && r <= gL_data[i+1].r) {
+                    return linearInterp(r, gL_data[i].r, gL_data[i].val, gL_data[i+1].r, gL_data[i+1].val);
+                }
+            }
+            return 1.0;
+        }
+
+        function get_F(r, theta) {
+            theta = Math.max(0, Math.min(180, theta));
+            r = Math.max(r_headers[0], Math.min(r_headers[r_headers.length - 1], r));
+            let tIdx0 = 0, tIdx1 = 0;
+            for (let i = 0; i < theta_rows.length - 1; i++) {
+                if (theta >= theta_rows[i] && theta <= theta_rows[i+1]) {
+                    tIdx0 = i; tIdx1 = i + 1; break;
+                }
+            }
+            let rIdx0 = 0, rIdx1 = 0;
+            for (let i = 0; i < r_headers.length - 1; i++) {
+                if (r >= r_headers[i] && r <= r_headers[i+1]) {
+                    rIdx0 = i; rIdx1 = i + 1; break;
+                }
+            }
+            if (tIdx0 >= F_table.length) tIdx0 = F_table.length - 1;
+            if (tIdx1 >= F_table.length) tIdx1 = F_table.length - 1;
+            const row0 = F_table[tIdx0];
+            const row1 = F_table[tIdx1];
+            if (!row0 || !row1) return 1.0; 
+            const q11 = row0[rIdx0];
+            const q12 = row0[rIdx1];
+            const q21 = row1[rIdx0];
+            const q22 = row1[rIdx1];
+            const f_r1 = linearInterp(r, r_headers[rIdx0], q11, r_headers[rIdx1], q12);
+            const f_r2 = linearInterp(r, r_headers[rIdx0], q21, r_headers[rIdx1], q22);
+            return linearInterp(theta, theta_rows[tIdx0], f_r1, theta_rows[tIdx1], f_r2);
+        }
+
+        function calcGeometryFactor(r, theta) {
+            if (theta === 0 || theta === Math.PI) {
+                return 1 / (r**2 - (EFFECTIVE_L/2)**2);
+            }
+            const y = r * Math.sin(theta);
+            const x = r * Math.cos(theta);
+            const theta1 = Math.atan2(y, x - EFFECTIVE_L/2);
+            const theta2 = Math.atan2(y, x + EFFECTIVE_L/2);
+            const angleSubtended = Math.abs(theta1 - theta2);
+            return angleSubtended / (EFFECTIVE_L * r * Math.sin(theta));
+        }
+
+        const G_ref = calcGeometryFactor(1.0, Math.PI / 2);
+
+        /** CANVAS & UI STATE **/
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('canvas-container');
+
+        let dwells = []; 
+        let pois = []; 
+        let mode = 'dwell'; 
+        let tableView = 'simple'; 
+        let scale = 40; 
+        let offsetX = 0;
+        let offsetY = 0;
+        let isPanning = false;
+        let lastMousePos = { x: 0, y: 0 };
+        let ghostPos = null; 
+        let showContours = false;
+        let isDataView = false;
+        let manualPositionSelection = "HFS"; 
+
+        function init() {
+            window.addEventListener('resize', resizeCanvas);
+            
+            requestAnimationFrame(() => {
+                resizeCanvas();
+                setDefaultView();
+                draw();
+            });
+
+            canvas.addEventListener('mousedown', handleMouseDown);
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseup', () => isPanning = false);
+            canvas.addEventListener('mouseleave', () => { ghostPos = null; draw(); });
+            canvas.addEventListener('wheel', handleWheel, { passive: false });
+
+            document.getElementById('tab-manual').onclick = () => setMode('dwell'); 
+            document.getElementById('tab-dicom').onclick = () => setMode('dicom');
+            document.getElementById('btn-dwell').onclick = () => setMode('dwell');
+            document.getElementById('btn-poi').onclick = () => setMode('poi');
+            document.getElementById('btn-dicom-copy').onclick = copyDicomTable;
+            document.getElementById('btn-clear').onclick = clearWork;
+            document.getElementById('btn-copy').onclick = copyToExcel;
+            document.getElementById('btn-simple').onclick = () => setTableView('simple');
+            document.getElementById('btn-detailed').onclick = () => setTableView('detailed');
+            document.getElementById('btn-contour').onclick = toggleContours;
+            document.getElementById('btn-view-data').onclick = toggleDataView;
+            
+            ['sk-val', 'dwell-time', 'dicom-sk-val', 'dicom-fractions'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.onchange = () => updateCalculations(false);
+            });
+
+            document.getElementById('dicom-position').onchange = (e) => {
+                manualPositionSelection = e.target.value;
+                updateCalculations(false);
+            };
+            
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('dicom-file');
+
+            dropZone.onclick = () => fileInput.click();
+            fileInput.onchange = (e) => { if(e.target.files.length) handleFile(e.target.files[0]); };
+            
+            dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
+            dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+            dropZone.ondrop = (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+            };
+
+            renderDataTables();
+            setMode('dwell');
+        }
+
+        // --- DICOM HANDLING ---
+        function handleFile(file) {
+            const status = document.getElementById('dicom-status');
+            status.textContent = `Reading ${file.name}...`;
+            status.classList.remove('hidden');
+            status.className = "p-3 rounded bg-blue-50 text-[10px] text-blue-600 font-mono break-all";
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const arrayBuffer = e.target.result;
+                    const dicomData = dcmjs.data.DicomMessage.readFile(arrayBuffer);
+                    const dataset = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomData.dict);
+                    parseDICOMPlan(dataset);
+                    const chCount = dwells.reduce((acc, d) => { acc.add(d.channel); return acc; }, new Set()).size;
+                    const totalTime = dwells.reduce((sum, d) => sum + d.time, 0).toFixed(1);
+                    status.innerHTML = `<span class="font-bold text-green-600">Success!</span><br>Loaded ${pois.length} Ref Points<br>Found ${chCount} Channels (${dwells.length} Dwell Positions)<br>Total Dwell Time: ${totalTime}s`;
+                    status.className = "p-3 rounded bg-green-50 text-[10px] text-slate-600 font-mono break-all border border-green-200";
+                } catch (err) {
+                    console.error(err);
+                    status.textContent = `Error: ${err.message}`;
+                    status.className = "p-3 rounded bg-red-50 text-[10px] text-red-600 font-mono break-all border border-red-200";
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function parseDICOMPlan(dataset) {
+            clearWork(false); 
+            mode = 'dicom'; 
+            
+            const posTag = dataset.PatientPosition || "HFS";
+            document.getElementById('dicom-position').value = posTag;
+            manualPositionSelection = posTag;
+
+            let fx = 1;
+            if (dataset.FractionGroupSequence && dataset.FractionGroupSequence[0]) {
+                fx = dataset.FractionGroupSequence[0].NumberOfFractionsPlanned || 1;
+            }
+            document.getElementById('dicom-fractions').value = fx;
+
+            if (dataset.DoseReferenceSequence) {
+                dataset.DoseReferenceSequence.forEach((item, idx) => {
+                    if (item.DoseReferenceStructureType === 'COORDINATES' && item.DoseReferencePointCoordinates) {
+                        const coords = item.DoseReferencePointCoordinates; 
+                        pois.push({
+                            id: pois.length + 1,
+                            name: item.DoseReferenceDescription || `Ref ${idx+1}`,
+                            x: coords[0] / 10, y: coords[1] / 10, z: coords[2] / 10,
+                            targetDose: item.TargetPrescriptionDose || 0
+                        });
+                    }
+                });
+            }
+
+            if (dataset.ApplicationSetupSequence) {
+                dataset.ApplicationSetupSequence.forEach(app => {
+                    if (app.ChannelSequence) {
+                        app.ChannelSequence.forEach(chan => {
+                            const chanNo = chan.ChannelNumber || 1;
+                            const totalTime = chan.ChannelTotalTime || 0;
+                            const finalWeight = chan.FinalCumulativeTimeWeight || 0;
+                            const chanLength = chan.ChannelLength || 0; 
+
+                            if (chan.BrachyControlPointSequence) {
+                                let prevWeight = 0;
+                                chan.BrachyControlPointSequence.forEach((cp) => {
+                                    const pos = cp.ControlPoint3DPosition; 
+                                    const weight = cp.CumulativeTimeWeight || 0;
+                                    const relPos = cp.ControlPointRelativePosition || 0; 
+
+                                    let dwellTime = finalWeight > 0 ? ((weight - prevWeight) / finalWeight) * totalTime : 0;
+                                    prevWeight = weight;
+                                    
+                                    if (pos && dwellTime > 0.001) {
+                                        let orientation = cp.ControlPointOrientation ? { x: cp.ControlPointOrientation[0], y: cp.ControlPointOrientation[1], z: cp.ControlPointOrientation[2] } : null;
+                                        const calculatedPos = ((chanLength - relPos) / 10) + 0.25;
+
+                                        dwells.push({ 
+                                            x: pos[0] / 10, 
+                                            y: pos[1] / 10, 
+                                            z: pos[2] / 10, 
+                                            time: dwellTime, 
+                                            orientation, 
+                                            channel: chanNo,
+                                            displayedPosition: calculatedPos
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            
+            for(let i=0; i<dwells.length; i++) {
+                if(!dwells[i].orientation) {
+                    let vec = {x:0, y:0, z:0};
+                    if (i < dwells.length - 1 && dwells[i+1].channel === dwells[i].channel) {
+                        vec.x = dwells[i].x - dwells[i+1].x; vec.y = dwells[i].y - dwells[i+1].y; vec.z = dwells[i].z - dwells[i+1].z;
+                    } else if (i > 0 && dwells[i-1].channel === dwells[i].channel) {
+                        vec.x = dwells[i-1].x - dwells[i].x; vec.y = dwells[i-1].y - dwells[i].y; vec.z = dwells[i-1].z - dwells[i].z;
+                    }
+                    const mag = Math.sqrt(vec.x*vec.x + vec.y*vec.y + vec.z*vec.z);
+                    dwells[i].orientation = mag > 0 ? { x: vec.x/mag, y: vec.y/mag, z: vec.z/mag } : { x: 1, y: 0, z: 0 };
+                }
+            }
+            updateCalculations(false);
+            setMode('dicom');
+        }
+
+        window.updateTargetDose = (id, val) => {
+            const p = pois.find(poi => poi.id === id);
+            if(p) {
+                p.targetDose = parseFloat(val) || 0;
+                renderDICOMSidebar(true); 
+            }
+        };
+
+        // --- TOOLTIP FUNCTIONS ---
+        function showChannelTooltip(chanId, e) {
+            const tooltip = document.getElementById('channel-tooltip');
+            const channelDwells = dwells.filter(d => d.channel === chanId);
+            
+            if (channelDwells.length === 0) return;
+
+            let html = `<div class="font-bold border-b border-slate-200 pb-2 mb-2 text-slate-700">Channel #${chanId} Detailed Info</div>`;
+            html += `<table class="text-[13px] w-full text-center border-collapse">`;
+            
+            html += `<tr><td class="bg-slate-50 font-bold p-1 border border-slate-200 text-left whitespace-nowrap">Step</td>`;
+            channelDwells.forEach((d, i) => {
+                html += `<td class="p-1 border border-slate-200 font-mono text-slate-400">#${i+1}</td>`;
+            });
+            html += `</tr>`;
+
+            html += `<tr><td class="bg-slate-50 font-bold p-1 border border-slate-200 text-left whitespace-nowrap">Pos (cm)</td>`;
+            channelDwells.forEach((d) => {
+                html += `<td class="p-1 border border-slate-200 font-medium">${d.displayedPosition ? d.displayedPosition.toFixed(2) : '-'}</td>`;
+            });
+            html += `</tr>`;
+
+            html += `<tr><td class="bg-slate-50 font-bold p-1 border border-slate-200 text-left whitespace-nowrap">Time (s)</td>`;
+            channelDwells.forEach((d) => {
+                html += `<td class="p-1 border border-slate-200 font-mono text-blue-600">${d.time.toFixed(2)}</td>`;
+            });
+            html += `</tr>`;
+            
+            html += `</table>`;
+            
+            tooltip.innerHTML = html;
+            tooltip.style.display = 'block';
+            moveChannelTooltip(e);
+        }
+
+        function moveChannelTooltip(e) {
+            const tooltip = document.getElementById('channel-tooltip');
+            const offset = 15;
+            let left = e.clientX + offset;
+            let top = e.clientY + offset;
+            const tooltipWidth = tooltip.offsetWidth; 
+            const tooltipHeight = tooltip.offsetHeight;
+            const viewWidth = window.innerWidth;
+            const viewHeight = window.innerHeight;
+
+            if (left + tooltipWidth > viewWidth) left = e.clientX - tooltipWidth - offset;
+            if (left < 0) left = 10;
+            if (top + tooltipHeight > viewHeight) top = e.clientY - tooltipHeight - offset;
+            if (top < 0) top = 10;
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+        }
+
+        function hideChannelTooltip() {
+            document.getElementById('channel-tooltip').style.display = 'none';
+        }
+
+        function renderDICOMSidebar(onlyResults = false) {
+            const mainBody = document.getElementById('dicom-main-table-body');
+            const headerRow = document.getElementById('dicom-header-row');
+            const fx = parseInt(document.getElementById('dicom-fractions').value) || 1;
+            const isFFS = manualPositionSelection === "FFS";
+
+            if (!onlyResults) {
+                headerRow.innerHTML = `
+                    <th class="p-3 border-b">POI Name</th>
+                    <th class="p-3 border-b text-center">X (cm)</th>
+                    <th class="p-3 border-b text-center">Y (cm)</th>
+                    <th class="p-3 border-b text-center">Z (cm)</th>
+                    <th class="p-3 border-b text-center">TPS Dose (Gy)</th>
+                    <th class="p-3 border-b text-center bg-blue-50/50">Calc Fx Dose (Gy)</th>
+                    <th class="p-3 border-b text-center bg-blue-100/50">Calc Total (Gy)</th>
+                    <th class="p-3 border-b text-right">Diff %</th>
+                `;
+
+                if(pois.length === 0) {
+                    mainBody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">No Reference Points found</td></tr>`;
+                } else {
+                    mainBody.innerHTML = pois.map(p => {
+                        const displayX = isFFS ? -p.x : p.x;
+                        const displayZ = isFFS ? -p.z : p.z;
+                        return `
+                        <tr id="row-poi-${p.id}" class="hover:bg-slate-50 transition border-b">
+                            <td class="p-3 font-medium text-slate-700">${p.name}</td>
+                            <td class="p-3 text-center text-slate-500">${displayX.toFixed(2)}</td>
+                            <td class="p-3 text-center text-slate-500">${p.y.toFixed(2)}</td>
+                            <td class="p-3 text-center text-slate-500">${displayZ.toFixed(2)}</td>
+                            <td class="p-3 text-center">
+                                <input type="number" step="0.001" value="${p.targetDose ? p.targetDose.toFixed(3) : ''}" 
+                                    class="table-input text-slate-600"
+                                    oninput="updateTargetDose(${p.id}, this.value)" placeholder="-">
+                            </td>
+                            <td id="res-dose-${p.id}" class="p-3 text-center font-bold text-blue-600 bg-blue-50/50">0.000</td>
+                            <td id="res-total-${p.id}" class="p-3 text-center font-bold text-indigo-600 bg-blue-100/50">0.000</td>
+                            <td id="res-diff-${p.id}" class="p-3 text-right font-mono text-slate-600">-</td>
+                        </tr>
+                    `}).join('');
+                }
+            }
+
+            pois.forEach(p => {
+                const sessionDose = p.totalDose || 0;
+                const calculatedTotal = sessionDose * fx;
+                const tpsDose = p.targetDose || 0;
+                
+                const doseEl = document.getElementById(`res-dose-${p.id}`);
+                const totalEl = document.getElementById(`res-total-${p.id}`);
+                const diffEl = document.getElementById(`res-diff-${p.id}`);
+
+                if (doseEl) doseEl.textContent = sessionDose === Infinity ? 'Inf' : sessionDose.toFixed(3);
+                if (totalEl) totalEl.textContent = calculatedTotal === Infinity ? 'Inf' : calculatedTotal.toFixed(3);
+                
+                if (diffEl) {
+                    if (tpsDose > 0 && calculatedTotal !== Infinity) {
+                        const diffVal = ((calculatedTotal - tpsDose)/tpsDose * 100);
+                        diffEl.textContent = diffVal.toFixed(1) + '%';
+                        if (Math.abs(diffVal) > 5) diffEl.className = 'p-3 text-right font-mono text-red-600 font-bold';
+                        else if (Math.abs(diffVal) < 2) diffEl.className = 'p-3 text-right font-mono text-green-600 font-bold';
+                        else diffEl.className = 'p-3 text-right font-mono text-slate-600';
+                    } else {
+                        diffEl.textContent = '-';
+                        diffEl.className = 'p-3 text-right font-mono text-slate-600';
+                    }
+                }
+            });
+
+            if (!onlyResults) {
+                const chanBody = document.getElementById('dicom-channel-body');
+                const channels = {};
+                dwells.forEach(d => {
+                    const c = d.channel || 1;
+                    if(!channels[c]) channels[c] = { dwells: 0, time: 0 };
+                    channels[c].dwells++;
+                    channels[c].time += d.time;
+                });
+                
+                if (Object.keys(channels).length === 0) {
+                    chanBody.innerHTML = `<tr><td colspan="3" class="text-center text-xs text-slate-400 py-4">No Data</td></tr>`;
+                } else {
+                    chanBody.innerHTML = Object.entries(channels).map(([num, data]) => `
+                        <tr class="hover:bg-blue-50 transition-colors cursor-help text-[13px]" 
+                            onmouseenter="showChannelTooltip(${num}, event)" 
+                            onmousemove="moveChannelTooltip(event)" 
+                            onmouseleave="hideChannelTooltip()">
+                            <td class="font-bold text-center">#${num}</td>
+                            <td class="text-center">${data.dwells}</td>
+                            <td class="text-center">${data.time.toFixed(1)}s</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        }
+
+        // --- CORE UI FUNCTIONS ---
+        function toggleContours() { showContours = !showContours; document.getElementById('btn-contour').classList.toggle('toggle-active', showContours); draw(); }
+        function toggleDataView() {
+            isDataView = !isDataView;
+            const calcView = document.getElementById('calculator-view');
+            const dataView = document.getElementById('tg43-data-view');
+            const btn = document.getElementById('btn-view-data');
+            if (isDataView) {
+                calcView.classList.add('hidden'); calcView.classList.remove('flex'); dataView.classList.remove('hidden'); btn.classList.add('toggle-active'); btn.innerHTML = `Back to Calc`;
+            } else {
+                dataView.classList.add('hidden'); calcView.classList.remove('hidden'); calcView.classList.add('flex'); btn.classList.remove('toggle-active'); btn.innerHTML = `View TG43U Data`;
+                if (mode !== 'dicom') requestAnimationFrame(() => { resizeCanvas(); setDefaultView(); draw(); });
+            }
+        }
+
+        function renderDataTables() {
+            document.getElementById('table-gl-body').innerHTML = gL_data.map(d => `<tr><td>${d.r}</td><td>${d.val}</td></tr>`).join('');
+            let fHeader = '<thead><tr><th class="p-2 bg-slate-50">θ \\ r (cm)</th>';
+            r_headers.forEach(r => fHeader += `<th class="p-2 bg-slate-50">${r}</th>`);
+            fHeader += '</tr></thead>';
+            let fBody = '<tbody class="divide-y divide-slate-100">';
+            F_table.forEach((row, i) => {
+                fBody += `<tr class="hover:bg-slate-50"><td class="font-bold bg-slate-50">${theta_rows[i]}°</td>`;
+                row.forEach(val => fBody += `<td>${val.toFixed(3)}</td>`); fBody += '</tr>';
+            });
+            document.getElementById('table-f').innerHTML = fHeader + fBody + '</tbody>';
+        }
+
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = container.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr); canvas.style.width = `${rect.width}px`; canvas.style.height = `${rect.height}px`; 
+
+            // Only center the view when explicitly requested or during actual window resize event
+            offsetX = rect.width / 2;
+            offsetY = rect.height / 2;
+            
+            draw();
+        }
+
+        function setDefaultView() {
+            const width = canvas.clientWidth; const height = canvas.clientHeight; 
+            if (!width || !height) return;
+            scale = Math.min((width/9)*0.95, (height/5)*0.95);
+            offsetX = width/2; offsetY = height/2; draw();
+        }
+
+        function setMode(m) {
+            const prevMode = mode;
+            mode = m;
+            const elements = ['tab-manual', 'tab-dicom', 'panel-manual', 'panel-dicom', 'canvas-container', 'manual-result-panel', 'dicom-result-panel', 'btn-dwell', 'btn-poi'];
+            const ui = {}; elements.forEach(id => ui[id] = document.getElementById(id));
+            if (m === 'dicom') {
+                ui['tab-manual'].className = "py-3 text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors";
+                ui['tab-dicom'].className = "py-3 text-xs font-bold uppercase border-b-2 border-orange-500 text-orange-500 transition-colors";
+                ui['panel-manual'].classList.add('hidden'); ui['panel-dicom'].classList.remove('hidden'); ui['canvas-container'].classList.add('hidden-canvas');
+                ui['manual-result-panel'].classList.add('hidden'); ui['dicom-result-panel'].classList.remove('hidden');
+                updateCalculations(false);
+            } else {
+                // From DICOM to Manual 2D acts as a full data reset
+                if (prevMode === 'dicom') {
+                    clearWork(true);
+                } else {
+                    // Manual internal switch (Add Dwell vs Add POI)
+                    ui['tab-manual'].className = "py-3 text-xs font-bold uppercase border-b-2 border-blue-600 text-blue-600 transition-colors";
+                    ui['tab-dicom'].className = "py-3 text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors";
+                    ui['panel-manual'].classList.remove('hidden'); ui['panel-dicom'].classList.add('hidden'); ui['canvas-container'].classList.remove('hidden-canvas');
+                    ui['manual-result-panel'].classList.remove('hidden'); ui['dicom-result-panel'].classList.add('hidden');
+                    
+                    if (m === 'dwell') {
+                        ui['btn-dwell'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-red-500 bg-red-500 text-white shadow-md transition-all group active:scale-95";
+                        ui['btn-poi'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-slate-200 bg-white text-slate-600 shadow-sm transition-all group active:scale-95";
+                    } else {
+                        ui['btn-dwell'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-slate-200 bg-white text-slate-600 shadow-sm transition-all group active:scale-95";
+                        ui['btn-poi'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-blue-600 bg-blue-600 text-white shadow-md transition-all group active:scale-95";
+                    }
+                    updateCalculations(false);
+                    // Do NOT call resizeCanvas() to preserve custom pan/zoom state
+                    requestAnimationFrame(() => { draw(); });
+                }
+            }
+        }
+
+        function setTableView(v) { tableView = v; document.getElementById('btn-simple').classList.toggle('btn-active', v === 'simple'); document.getElementById('btn-detailed').classList.toggle('btn-active', v === 'detailed'); updateCalculations(false); }
+        
+        function handleWheel(e) { 
+            e.preventDefault(); 
+            const factor = Math.pow(1.1, -e.deltaY / 100);
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const worldX = (mouseX - offsetX) / scale;
+            const worldY = (mouseY - offsetY) / scale;
+
+            const newScale = Math.max(10, Math.min(200, scale * factor));
+            offsetX = mouseX - worldX * newScale;
+            offsetY = mouseY - worldY * newScale;
+            scale = newScale;
+
+            draw(); 
+        }
+
+        function handleMouseDown(e) {
+            if (e.button === 1) { isPanning = true; lastMousePos = { x: e.clientX, y: e.clientY }; return; }
+            if (mode === 'dicom') return;
+            const rect = canvas.getBoundingClientRect();
+            let wx = Math.round(((e.clientX - rect.left - offsetX) / scale) * 2) / 2;
+            let wy = Math.round(((e.clientY - rect.top - offsetY) / scale) * 2) / 2;
+            if (mode === 'dwell') {
+                dwells.push({ x: wx, y: wy, z: 0, time: parseFloat(document.getElementById('dwell-time').value) });
+                updateCalculations(false);
+            }
+            else if (mode === 'poi') {
+                pois.push({ x: wx, y: wy, z: 0, id: pois.length + 1, name: `P${pois.length + 1}` });
+                updateCalculations(false);
+            }
+        }
+        function handleMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            if (isPanning) { offsetX += e.clientX - lastMousePos.x; offsetY += e.clientY - lastMousePos.y; lastMousePos = { x: e.clientX, y: e.clientY }; ghostPos = null; }
+            else ghostPos = { x: Math.round(((e.clientX - rect.left - offsetX) / scale) * 2) / 2, y: Math.round(((e.clientY - rect.top - offsetY) / scale) * 2) / 2 };
+            draw();
+        }
+
+        function drawGrid() {
+            const s = scale, width = canvas.clientWidth, height = canvas.clientHeight;
+            if (!width || !height || isNaN(offsetX) || isNaN(offsetY)) return;
+            
+            ctx.save(); ctx.beginPath(); ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1.0; ctx.setLineDash([2, 4]); 
+            for (let x = offsetX % (0.5*s); x < width; x += 0.5*s) { ctx.moveTo(x, 0); ctx.lineTo(x, height); }
+            for (let y = offsetY % (0.5*s); y < height; y += 0.5*s) { ctx.moveTo(0, y); ctx.lineTo(width, y); }
+            ctx.stroke(); ctx.restore(); ctx.beginPath(); ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.1;
+            for (let x = offsetX % s; x < width; x += s) { ctx.moveTo(x, 0); ctx.lineTo(x, height); }
+            for (let y = offsetY % s; y < height; y += s) { ctx.moveTo(0, y); ctx.lineTo(width, y); }
+            ctx.stroke(); ctx.beginPath(); ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2.0; ctx.moveTo(0, offsetY); ctx.lineTo(width, offsetY); ctx.moveTo(offsetX, 0); ctx.lineTo(offsetX, height); ctx.stroke();
+            
+            ctx.font = '13px Arial'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center';
+            for (let i = -20; i <= 20; i++) { 
+                if (i !== 0) { 
+                    const xl = offsetX + i * s; const yl = offsetY + i * s;
+                    if (!isNaN(xl)) ctx.fillText(String(i), xl, offsetY + 15); 
+                    if (!isNaN(yl)) {
+                        ctx.textAlign = 'right'; 
+                        ctx.fillText(String(-i), offsetX - 6, yl + 4); 
+                        ctx.textAlign = 'center'; 
+                    }
+                } 
+            }
+        }
+
+        function drawSource(x, y, alpha = 1.0) {
+            const px = offsetX + x*scale, py = offsetY + y*scale, len = EFFECTIVE_L*scale*1.3;
+            ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(px-len/2, py); ctx.lineTo(px+len/2, py); ctx.stroke();
+            ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.moveTo(px-len/2-18, py); ctx.lineTo(px-len/2, py-12); ctx.lineTo(px-len/2, py+12); ctx.closePath(); ctx.fill(); ctx.restore();
+        }
+
+        function drawPOI(name, x, y, dose = null, alpha = 1.0) {
+            const px = offsetX + x*scale, py = offsetY + y*scale;
+            ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#2563eb'; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
+            ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(name, px, py-8);
+            if (dose !== null) { const txt = dose === Infinity ? 'Inf' : dose.toFixed(2); ctx.font = '14px Arial'; ctx.translate(px+22, py-32); ctx.rotate(-Math.PI/4); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(-2,-14,ctx.measureText(txt).width+4,16); ctx.fillStyle = '#1e40af'; ctx.textAlign = 'left'; ctx.fillText(txt, 0, 0); }
+            ctx.restore();
+        }
+
+        function calculateDoseAtPoint(wx, wy, wz) {
+             const Sk = parseFloat(document.getElementById(mode === 'dicom' ? 'dicom-sk-val' : 'sk-val')?.value) || 40700;
+             let total = 0;
+             for(let d of dwells) {
+                 const dx = wx-d.x, dy = wy-d.y, dz = wz-d.z, r = Math.sqrt(dx*dx+dy*dy+dz*dz);
+                 if (r < 0.05) return Infinity; 
+                 let th = d.orientation ? Math.acos(Math.max(-1, Math.min(1, (dx*d.orientation.x + dy*d.orientation.y + dz*d.orientation.z)/r))) * 180 / Math.PI : Math.abs(Math.atan2(dy, -dx) * 180 / Math.PI);
+                 const val = (Sk * doseRateConstant * (calcGeometryFactor(r, th*Math.PI/180)/G_ref) * get_gL(r) * get_F(r, th) / 100) * (d.time / 3600);
+                 if(!isNaN(val)) total += val;
+             }
+             return total;
+        }
+
+        function getNormalizationDose() {
+             if (dwells.length === 0) return 1;
+             let mx=0, my=0, mz=0; dwells.forEach(d => { mx += d.x; my += d.y; mz += d.z; });
+             let d = calculateDoseAtPoint(mx/dwells.length, my/dwells.length + 1.0, mz/dwells.length);
+             return (d <= 0 || d === Infinity) ? 1 : d;
+        }
+
+        function drawIsodoseContours() {
+            if (dwells.length === 0) return;
+            const step = 4, w = canvas.clientWidth, h = canvas.clientHeight, ref = getNormalizationDose(), lvls = [0.05, 0.20, 0.40, 0.60, 0.80, 1.00, 1.50, 2.00], clrs = ["#3b82f6", "#06b6d4", "#10b981", "#84cc16", "#eab308", "#f97316", "#ef4444", "#d946ef"];
+            const cols = Math.ceil(w/step)+1, rows = Math.ceil(h/step)+1, grid = new Float32Array(cols*rows);
+            for(let j=0; j<rows; j++) for(let i=0; i<cols; i++) {
+                const val = calculateDoseAtPoint((i*step-offsetX)/scale, (j*step-offsetY)/scale, 0);
+                grid[j*cols+i] = val === Infinity ? 999 : val/ref;
+            }
+            ctx.lineWidth = 1.5;
+            for(let j=0; j<rows-1; j++) for(let i=0; i<cols-1; i++) {
+                const v = [grid[j*cols+i], grid[j*cols+i+1], grid[(j+1)*cols+i+1], grid[(j+1)*cols+i]], x = i*step, y = j*step;
+                lvls.forEach((l, idx) => {
+                    let cfg = 0; if (v[0]>=l) cfg|=8; if (v[1]>=l) cfg|=4; if (v[2]>=l) cfg|=2; if (v[3]>=l) cfg|=1;
+                    if (cfg===0 || cfg===15) return; ctx.strokeStyle = clrs[idx]; ctx.beginPath();
+                    const p = [{x: x+step*((l-v[0])/(v[1]-v[0])), y}, {x: x+step, y: y+step*((l-v[1])/(v[2]-v[1]))}, {x: x+step*((l-v[3])/(v[2]-v[3])), y: y+step}, {x, y: y+step*((l-v[0])/(v[3]-v[0]))}];
+                    if (cfg===1 || cfg===14) drawLine(p[3], p[2]); else if (cfg===2 || cfg===13) drawLine(p[2], p[1]); else if (cfg===3 || cfg===12) drawLine(p[3], p[1]); else if (cfg===4 || cfg===11) drawLine(p[0], p[1]); else if (cfg===5) { drawLine(p[3], p[0]); drawLine(p[2], p[1]); } else if (cfg===6 || cfg===9) drawLine(p[0], p[2]); else if (cfg===7 || cfg===8) drawLine(p[3], p[0]); else if (cfg===10) { drawLine(p[0], p[1]); drawLine(p[3], p[2]); }
+                    ctx.stroke();
+                });
+            }
+        }
+        function drawLine(p1, p2) { ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); }
+
+        function draw() {
+            ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight); drawGrid(); if (showContours) drawIsodoseContours();
+            dwells.forEach(d => drawSource(d.x, d.y)); pois.forEach(p => drawPOI(p.name||`P${p.id}`, p.x, p.y, p.totalDose));
+            if (ghostPos && !isPanning && mode !== 'dicom') { if (mode === 'dwell') drawSource(ghostPos.x, ghostPos.y, 0.4); else drawPOI("", ghostPos.x, ghostPos.y, null, 0.4); }
+        }
+
+        function updateCalculations(onlyResults = true) {
+            const Sk = parseFloat(document.getElementById(mode === 'dicom' ? 'dicom-sk-val' : 'sk-val')?.value) || 40700;
+            pois.forEach(poi => {
+                let total = 0; poi.details = [];
+                dwells.forEach((d, idx) => {
+                    const dx=poi.x-d.x, dy=poi.y-d.y, dz=poi.z-d.z, r=Math.sqrt(dx*dx+dy*dy+dz*dz);
+                    let th = d.orientation ? Math.acos(Math.max(-1, Math.min(1, (dx*d.orientation.x + dy*d.orientation.y + dz*d.orientation.z)/r))) * 180 / Math.PI : Math.abs(Math.atan2(dy, -dx) * 180 / Math.PI);
+                    const GL = calcGeometryFactor(r, th*Math.PI/180)/G_ref, gL = get_gL(r), F = get_F(r, th);
+                    const dDose = r < 0.05 ? Infinity : (Sk*doseRateConstant*GL*gL*F/100)*(d.time / 3600);
+                    if(!isNaN(dDose)) { total += dDose; poi.details.push({ dwellIdx: idx+1, r: r.toFixed(2), theta: th.toFixed(1), GL: GL.toFixed(4), gL: gL.toFixed(4), F: F.toFixed(4), dose: dDose }); }
+                });
+                poi.totalDose = total;
+            });
+            
+            if(mode === 'dicom') renderDICOMSidebar(onlyResults); else renderManualSidebar(onlyResults);
+            renderTable(); if(mode !== 'dicom') draw();
+        }
+
+        function renderManualSidebar(onlyResults = false) {
+            if(mode === 'dicom') return;
+            document.getElementById('dwell-count').innerText = dwells.length; document.getElementById('poi-count').innerText = pois.length;
+            if (!onlyResults) {
+                document.getElementById('dwell-table-body').innerHTML = dwells.map((d, i) => `<tr><td class="text-center text-[10px]">#${i+1}</td><td><input type="number" step="0.5" value="${d.x}" oninput="updateDwell(${i}, 'x', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${d.y}" oninput="updateDwell(${i}, 'y', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${d.z}" oninput="updateDwell(${i}, 'z', this.value)" class="side-input"></td><td><input type="number" value="${d.time}" oninput="updateDwell(${i}, 'time', this.value)" class="side-input"></td><td class="text-center"><button onclick="removeDwell(${i})" class="text-slate-300 hover:text-red-500 font-bold">×</button></td></tr>`).join('');
+                document.getElementById('poi-table-body').innerHTML = pois.map((p, i) => `<tr><td class="text-center text-[10px]">P${p.id}</td><td><input type="number" step="0.5" value="${p.x}" oninput="updatePOI(${i}, 'x', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${p.y}" oninput="updatePOI(${i}, 'y', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${p.z}" oninput="updatePOI(${i}, 'z', this.value)" class="side-input"></td><td id="poi-res-dose-${p.id}" class="text-blue-600 font-bold text-center text-[10px]">${(p.totalDose === Infinity ? 'Inf' : (p.totalDose || 0).toFixed(2))}</td><td class="text-center"><button onclick="removePOI(${i})" class="text-slate-300 hover:text-red-500 font-bold">×</button></td></tr>`).join('');
+            } else {
+                pois.forEach(p => { const el = document.getElementById(`poi-res-dose-${p.id}`); if (el) el.textContent = (p.totalDose === Infinity ? 'Inf' : (p.totalDose || 0).toFixed(2)); });
+            }
+        }
+
+        window.updateDwell = (i, f, v) => { const n = parseFloat(v); dwells[i][f] = isNaN(n) ? 0 : n; updateCalculations(true); };
+        window.updatePOI = (i, f, v) => { const n = parseFloat(v); pois[i][f] = isNaN(n) ? 0 : n; updateCalculations(true); };
+        window.removeDwell = (i) => { dwells.splice(i, 1); updateCalculations(false); };
+        window.removePOI = (i) => { pois.splice(i, 1); updateCalculations(false); };
+
+        function renderTable() {
+            const head = document.querySelector('#results-table thead'), body = document.getElementById('results-body');
+            head.innerHTML = ''; body.innerHTML = ''; const thr = document.createElement('tr');
+            if (tableView === 'simple') {
+                ['Name', 'X (cm)', 'Y (cm)', 'Z (cm)', 'Total Dose (Gy)'].forEach(txt => { const th = document.createElement('th'); th.textContent = txt; thr.appendChild(th); });
+            } else {
+                ['Name', 'Dwell', 'r (cm)', 'θ (°)', 'G_L/G_ref', 'g_L(r)', 'F(r,θ)', 'Dose (Gy)', 'Total Dose (Gy)'].forEach(txt => { const th = document.createElement('th'); th.textContent = txt; thr.appendChild(th); });
+            }
+            head.appendChild(thr);
+            pois.forEach(p => {
+                if (tableView === 'simple') body.innerHTML += `<tr><td class="bg-slate-50 font-bold text-xs">${p.name||`P${p.id}`}</td><td>${p.x.toFixed(2)}</td><td>${p.y.toFixed(2)}</td><td>${p.z.toFixed(2)}</td><td class="font-bold text-blue-700">${(p.totalDose === Infinity ? 'Inf' : (p.totalDose || 0).toFixed(3))}</td></tr>`;
+                else {
+                    p.details.forEach((d, i) => {
+                        let row = `<tr>`;
+                        if (i === 0) row += `<td rowspan="${p.details.length}" class="bg-slate-50 font-bold text-xs border-r">${p.name||`P${p.id}`}</td>`;
+                        row += `<td>#${d.dwellIdx}</td><td>${d.r}</td><td>${d.theta}</td><td>${d.GL}</td><td>${d.gL}</td><td>${d.F}</td><td class="font-medium">${d.dose === Infinity ? 'Inf' : d.dose.toFixed(4)}</td>`;
+                        if (i === 0) row += `<td rowspan="${p.details.length}" class="font-bold text-blue-700 border-l text-center">${(p.totalDose === Infinity ? 'Inf' : p.totalDose.toFixed(3))}</td>`;
+                        row += `</tr>`;
+                        body.innerHTML += row;
+                    });
+                }
+            });
+        }
+
+        function clearWork(resetView = true) { 
+            dwells = []; pois = []; manualPositionSelection = "HFS";
+            const posEl = document.getElementById('dicom-position');
+            if (posEl) posEl.value = "HFS";
+            if(mode==='dicom') { document.getElementById('dicom-status').classList.add('hidden'); }
+            setMode('dwell');
+            if (resetView) setDefaultView();
+            updateCalculations(false); 
+        }
+
+        document.getElementById('btn-clear').onclick = () => clearWork(true);
+
+        function copyToExcel() {
+            let text = "";
+            if (tableView === 'simple') {
+                const table = document.getElementById('results-table');
+                for (let i=0; i<table.rows.length; i++) {
+                    let r = []; for (let j=0; j<table.rows[i].cells.length; j++) r.push(table.rows[i].cells[j].innerText.replace(/\n/g, " "));
+                    text += r.join("\t") + "\n";
+                }
+            } else {
+                text = "Name\tDwell\tr (cm)\tθ (°)\tG_L/G_ref\tg_L(r)\tF(r,θ)\tDose (Gy)\tTotal Dose (Gy)\n";
+                pois.forEach(p => {
+                    p.details.forEach((d, i) => {
+                        const name = i === 0 ? (p.name || `P${p.id}`) : "";
+                        const total = i === 0 ? (p.totalDose === Infinity ? "Inf" : p.totalDose.toFixed(3)) : "";
+                        text += `${name}\t#${d.dwellIdx}\t${d.r}\t${d.theta}\t${d.GL}\t${d.gL}\t${d.F}\t${d.dose === Infinity ? "Inf" : d.dose.toFixed(4)}\t${total}\n`;
+                    });
+                });
+            }
+            const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); const b = document.getElementById('btn-copy'); const old = b.innerText; b.innerText = "Copied!"; setTimeout(() => { b.innerText = old; }, 2000); } catch(e){} document.body.removeChild(ta);
+        }
+
+        function copyDicomTable() {
+            const fx = parseInt(document.getElementById('dicom-fractions').value) || 1;
+            const body = document.getElementById('dicom-main-table-body');
+            let txt = `POI Name\tX (cm)\tY (cm)\tZ (cm)\tTPS Dose (Gy)\tCalc Fx Dose (Gy)\tCalc Total (Gy)\tDiff %\n`;
+            for (let i=0; i<body.rows.length; i++) {
+                let r = []; const cells = body.rows[i].cells;
+                for (let j=0; j<cells.length; j++) { const inp = cells[j].querySelector('input'); r.push(inp ? inp.value : cells[j].innerText.replace(/\n/g, " ")); }
+                txt += r.join("\t") + "\n";
+            }
+            const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); 
+            try { 
+                document.execCommand('copy'); 
+                const b = document.getElementById('btn-dicom-copy'); 
+                const old = b.innerText; 
+                b.innerText = "Copied!"; 
+                setTimeout(() => { b.innerText = old; }, 2000); 
+            } catch(e){} 
+            document.body.removeChild(ta);
+        }
+
+        init();
+    </script>
+</body>
+</html>
