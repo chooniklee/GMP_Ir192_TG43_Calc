@@ -16,12 +16,13 @@
         
         .sidebar-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white; }
         
-        .sidebar-table th { background-color: #f8fafc; text-transform: none; font-size: 10px; color: #64748b; padding: 6px; border-bottom: 1px solid #e2e8f0; }
+        /* Updated header font-size to 12px (text-xs) to match the results table */
+        .sidebar-table th { background-color: #f8fafc; text-transform: none; font-size: 12px; color: #64748b; padding: 6px; border-bottom: 1px solid #e2e8f0; font-weight: 700; }
         
         .sidebar-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; }
         
         /* Results Table Header */
-        #results-table th { background-color: #f8fafc; text-transform: none; font-size: 10px; color: #64748b; padding: 6px; border-bottom: 1px solid #e2e8f0; }
+        #results-table th { background-color: #f8fafc; text-transform: none; font-size: 12px; color: #64748b; padding: 6px; border-bottom: 1px solid #e2e8f0; }
 
         /* Data View Tables */
         .data-view-table { border-collapse: collapse; font-size: 0.7rem; }
@@ -32,7 +33,7 @@
         .side-input { width: 100%; padding: 2px 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; text-align: center; transition: all 0.2s; background-color: #fff; }
         .side-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
 
-        /* Table Input Styling (Always visible text box) */
+        /* Table Input Styling */
         .table-input { 
             width: 100%; padding: 4px; border: 1px solid #cbd5e1; background-color: #ffffff; 
             text-align: center; font-weight: 500; border-radius: 4px; transition: all 0.2s; 
@@ -54,7 +55,7 @@
         .drop-zone { border: 2px dashed #cbd5e1; transition: all 0.3s; }
         .drop-zone.dragover { border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.05); }
 
-        /* Tooltip Style (Horizontal Transposed Table) */
+        /* Tooltip Style */
         #channel-tooltip {
             position: fixed;
             z-index: 1000;
@@ -64,7 +65,7 @@
             box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             padding: 12px;
-            font-size: 13px; /* Tooltip font set to 13px */
+            font-size: 13px;
             display: none;
             max-width: 80vw;
             max-height: 400px;
@@ -82,15 +83,15 @@
     <div class="bg-white border-b px-4 py-3 flex items-center justify-between shadow-sm z-10 h-[60px]">
         <h1 class="text-lg font-bold text-gray-800 flex items-center gap-2">
             <span class="text-red-600 text-xl">☢</span> 
-            <span>GammaMed Plus <sup class="text-gray-500 font-medium">192</sup>Ir TG-43U Physics Check</span>
+            <span>GammaMed Plus <sup class="text-gray-500 font-medium">192</sup>Ir TG-43 Physics Check</span>
         </h1>
         
         <div class="flex gap-2">
             <button id="btn-view-data" class="px-3 py-1.5 bg-white text-slate-600 border border-slate-200 rounded-lg text-sm font-bold hover:bg-slate-50 transition flex items-center gap-2 shadow-sm">
-                View TG43U Data
+                View TG43 Data
             </button>
 
-            <button id="btn-clear" class="px-3 py-1.5 bg-white text-red-500 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-50 transition flex items-center gap-2">
+            <button id="btn-clear" class="px-3 py-1.5 bg-red text-red-500 border border-red-200 rounded-lg text-sm font-bold hover:bg-red-50 transition flex items-center gap-2">
                 Reset
             </button>
         </div>
@@ -117,9 +118,8 @@
                 <!-- Scrollable Content Area -->
                 <div class="flex-grow overflow-y-auto p-4 space-y-4 sidebar-scroll relative">
                     
-                    <!-- MANUAL MODE PANEL -->
+                    <!-- MANUAL MODE CONTENT -->
                     <div id="panel-manual" class="space-y-4">
-                        <!-- Action Buttons -->
                         <div class="grid grid-cols-2 gap-3">
                             <button id="btn-dwell" class="flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-red-500 bg-red-500 text-white shadow-md hover:shadow-lg transition-all group active:scale-95">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
@@ -131,25 +131,19 @@
                             </button>
                         </div>
 
-                        <!-- Manual Settings -->
                         <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="space-y-1.5">
                                     <label class="text-[10px] font-bold text-slate-400 uppercase block">S<sub>k</sub> (U)</label>
-                                    <div class="relative">
-                                        <input type="number" id="sk-val" value="40700" class="w-full pl-2 pr-2 py-1.5 text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:border-blue-500 outline-none text-center">
-                                    </div>
+                                    <input type="number" id="sk-val" value="40700" class="w-full px-2 py-1.5 text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:border-blue-500 outline-none text-center">
                                 </div>
                                 <div class="space-y-1.5">
                                     <label class="text-[10px] font-bold text-slate-400 uppercase block">Default Dwell(s)</label>
-                                    <div class="relative">
-                                        <input type="number" id="dwell-time" value="10" class="w-full pl-2 pr-2 py-1.5 text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:border-blue-500 outline-none text-center">
-                                    </div>
+                                    <input type="number" id="dwell-time" value="10" class="w-full px-2 py-1.5 text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:border-blue-500 outline-none text-center">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Manual Dwell Info -->
                         <section>
                             <div class="flex items-center justify-between mb-2 px-1">
                                 <h3 class="text-[11px] font-bold text-slate-500 uppercase flex items-center gap-2">
@@ -172,7 +166,6 @@
                             </table>
                         </section>
 
-                        <!-- Points of Interest Info -->
                         <section>
                             <div class="flex items-center justify-between mb-2 px-1">
                                 <h3 class="text-[11px] font-bold text-slate-500 uppercase flex items-center gap-2">
@@ -196,7 +189,7 @@
                         </section>
                     </div>
 
-                    <!-- DICOM MODE PANEL -->
+                    <!-- DICOM SideBar Content -->
                     <div id="panel-dicom" class="hidden space-y-4">
                         <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-4">
                             <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
@@ -211,6 +204,18 @@
                             <div id="dicom-status" class="hidden p-3 rounded bg-slate-100 text-[10px] font-mono break-all border border-slate-200"></div>
                         </div>
 
+                        <!-- Device Information UI -->
+                        <div id="dicom-machine-info" class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-2">
+                             <div class="flex items-center justify-between">
+                                 <span class="text-[12px] font-bold text-slate-400">Afterloader Name:</span>
+                                 <span id="machine-name-display" class="text-xs font-bold text-slate-700">-</span>
+                             </div>
+                             <div class="flex items-center justify-between">
+                                 <span class="text-[12px] font-bold text-slate-400">Dwell Position Offset (cm):</span>
+                                 <input type="number" id="dicom-offset-input" value="0.00" step="0.01" oninput="handleOffsetChange(this.value)" class="w-16 px-2 py-0.5 text-xs font-bold text-slate-700 bg-slate-50 border border-slate-300 rounded focus:border-blue-500 outline-none text-center">
+                             </div>
+                        </div>
+
                         <section>
                             <h3 class="text-[11px] font-bold text-slate-500 uppercase flex items-center gap-2 mb-2 px-1">
                                 <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> Channels Summary
@@ -220,8 +225,8 @@
                                     <thead>
                                         <tr>
                                             <th>Ch#</th>
-                                            <th>Dwells</th>
-                                            <th>Total Time</th>
+                                            <th># of Dwells</th>
+                                            <th>Dwell Time(s)</th>
                                         </tr>
                                     </thead>
                                     <tbody id="dicom-channel-body" class="text-[13px]">
@@ -267,7 +272,7 @@
                     </div>
                 </div>
 
-                <!-- DICOM Result View -->
+                <!-- DICOM Result Area -->
                 <div id="dicom-result-panel" class="hidden flex-grow flex flex-col p-6 bg-slate-50 overflow-auto bg-pattern">
                     <div class="max-w-6xl mx-auto w-full space-y-4">
                         <div class="flex items-center justify-between">
@@ -327,7 +332,7 @@
                     </div>
                 </div>
 
-                <!-- Manual Result View -->
+                <!-- Manual Result Area -->
                 <div id="manual-result-panel" class="bg-white p-4 shrink-0 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.05)] z-20">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-3">
@@ -337,7 +342,7 @@
                             </h2>
                             <button id="btn-copy" class="px-2 py-1 bg-slate-800 text-white border border-slate-800 rounded-md text-[12px] font-bold hover:bg-slate-700 transition flex items-center gap-1.5 shadow-sm">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="16" x2="16" y1="8" y2="16"/><line x1="8" x2="8" y1="8" y2="16"/><line x1="3" x2="21" y1="12" y2="12"/></svg>
-                                Copy to Clipboard
+                                Copy Data
                             </button>
                         </div>
                         <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
@@ -355,7 +360,7 @@
             </div>
         </div>
 
-        <!-- TG-43 Data View (Hidden) -->
+        <!-- TG-43 Data View -->
         <div id="tg43-data-view" class="hidden h-full w-full bg-slate-50 overflow-auto p-8">
             <div class="max-w-6xl mx-auto space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -383,7 +388,7 @@
         </div>
     </div>
 
-    <!-- Hover Tooltip Container -->
+    <!-- Tooltip Element -->
     <div id="channel-tooltip"></div>
 
     <script>
@@ -416,9 +421,9 @@
             [0.762, 0.762, 0.753, 0.743, 0.738, 0.738, 0.741, 0.740, 0.748, 0.752, 0.755, 0.765, 0.772, 0.778, 0.799, 0.808, 0.826, 0.844],
             [0.837, 0.837, 0.820, 0.803, 0.801, 0.802, 0.804, 0.802, 0.809, 0.811, 0.813, 0.821, 0.828, 0.829, 0.844, 0.848, 0.863, 0.873],
             [0.962, 0.962, 0.866, 0.855, 0.854, 0.852, 0.853, 0.852, 0.858, 0.858, 0.862, 0.865, 0.870, 0.869, 0.878, 0.880, 0.893, 0.900],
-            [0.968, 0.968, 0.923, 0.917, 0.916, 0.912, 0.913, 0.912, 0.918, 0.918, 0.921, 0.923, 0.923, 0.927, 0.930, 0.933, 0.939],
+            [0.968, 0.968, 0.923, 0.917, 0.916, 0.912, 0.913, 0.912, 0.918, 0.918, 0.918, 0.921, 0.923, 0.923, 0.927, 0.930, 0.933, 0.939],
             [0.979, 0.979, 0.956, 0.951, 0.952, 0.948, 0.949, 0.946, 0.950, 0.951, 0.950, 0.953, 0.955, 0.954, 0.958, 0.958, 0.959, 0.963],
-            [0.987, 0.987, 0.977, 0.973, 0.973, 0.971, 0.972, 0.971, 0.972, 0.973, 0.973, 0.974, 0.975, 0.974, 0.977, 0.976, 0.978, 0.978],
+            [0.987, 0.987, 0.977, 0.973, 0.973, 0.971, 0.972, 0.971, 0.972, 0.973, 0.973, 0.974, 0.974, 0.977, 0.976, 0.978, 0.978],
             [0.993, 0.993, 0.987, 0.984, 0.985, 0.985, 0.987, 0.985, 0.987, 0.988, 0.989, 0.989, 0.988, 0.988, 0.989, 0.988, 0.988, 0.988],
             [0.994, 0.994, 0.995, 0.994, 0.994, 0.995, 0.996, 0.993, 0.996, 0.996, 0.996, 0.996, 0.996, 1.000, 0.999, 0.995, 0.995, 0.996],
             [0.998, 0.998, 0.999, 0.999, 0.998, 0.999, 1.000, 0.998, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 0.999, 0.999, 0.999, 0.999],
@@ -537,7 +542,7 @@
             canvas.addEventListener('mouseleave', () => { ghostPos = null; draw(); });
             canvas.addEventListener('wheel', handleWheel, { passive: false });
 
-            document.getElementById('tab-manual').onclick = () => setMode('dwell'); 
+            document.getElementById('tab-manual').onclick = () => setMode('manual_reset'); 
             document.getElementById('tab-dicom').onclick = () => setMode('dicom');
             document.getElementById('btn-dwell').onclick = () => setMode('dwell');
             document.getElementById('btn-poi').onclick = () => setMode('poi');
@@ -591,10 +596,6 @@
                     const dicomData = dcmjs.data.DicomMessage.readFile(arrayBuffer);
                     const dataset = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomData.dict);
                     parseDICOMPlan(dataset);
-                    const chCount = dwells.reduce((acc, d) => { acc.add(d.channel); return acc; }, new Set()).size;
-                    const totalTime = dwells.reduce((sum, d) => sum + d.time, 0).toFixed(1);
-                    status.innerHTML = `<span class="font-bold text-green-600">Success!</span><br>Loaded ${pois.length} Ref Points<br>Found ${chCount} Channels (${dwells.length} Dwell Positions)<br>Total Dwell Time: ${totalTime}s`;
-                    status.className = "p-3 rounded bg-green-50 text-[10px] text-slate-600 font-mono break-all border border-green-200";
                 } catch (err) {
                     console.error(err);
                     status.textContent = `Error: ${err.message}`;
@@ -608,6 +609,27 @@
             clearWork(false); 
             mode = 'dicom'; 
             
+            // Refined Machine Model Name Detection [0008, 1090]
+            let modelName = dataset.ManufacturerModelName || "";
+            
+            // Search deep if generic software name ARIA is found or empty
+            if ((!modelName || modelName.includes("ARIA")) && dataset.TreatmentMachineSequence && dataset.TreatmentMachineSequence[0]) {
+                modelName = dataset.TreatmentMachineSequence[0].ManufacturerModelName || modelName;
+            }
+
+            document.getElementById('machine-name-display').textContent = modelName || "Unknown Machine";
+            
+            // Set Default Offset based on keywords in model name
+            let defaultOffset = 0.00;
+            const lowerModel = modelName.toLowerCase();
+            if (lowerModel.includes("bravos")) {
+                defaultOffset = 0.25;
+            } else if (lowerModel.includes("gammamed") || lowerModel.includes("gmp")) {
+                defaultOffset = 0.35;
+            }
+            document.getElementById('dicom-offset-input').value = defaultOffset.toFixed(2);
+
+            // Position [0018, 5100] sync
             const posTag = dataset.PatientPosition || "HFS";
             document.getElementById('dicom-position').value = posTag;
             manualPositionSelection = posTag;
@@ -653,7 +675,7 @@
                                     
                                     if (pos && dwellTime > 0.001) {
                                         let orientation = cp.ControlPointOrientation ? { x: cp.ControlPointOrientation[0], y: cp.ControlPointOrientation[1], z: cp.ControlPointOrientation[2] } : null;
-                                        const calculatedPos = ((chanLength - relPos) / 10) + 0.25;
+                                        const stepPosBase = (chanLength - relPos) / 10;
 
                                         dwells.push({ 
                                             x: pos[0] / 10, 
@@ -662,7 +684,8 @@
                                             time: dwellTime, 
                                             orientation, 
                                             channel: chanNo,
-                                            displayedPosition: calculatedPos
+                                            stepPosBase: stepPosBase,
+                                            displayedPosition: stepPosBase + defaultOffset
                                         });
                                     }
                                 });
@@ -686,6 +709,12 @@
             }
             updateCalculations(false);
             setMode('dicom');
+
+            const status = document.getElementById('dicom-status');
+            const chCount = dwells.reduce((acc, d) => { acc.add(d.channel); return acc; }, new Set()).size;
+            const totalTimeSum = dwells.reduce((sum, d) => sum + d.time, 0).toFixed(1);
+            status.innerHTML = `<span class="font-bold text-green-600">Success!</span><br>Loaded ${pois.length} Ref Points<br>Found ${chCount} Channels (${dwells.length} Dwell Positions)<br>Total Dwell Time: ${totalTimeSum}s`;
+            status.className = "p-3 rounded bg-green-50 text-[10px] text-slate-600 font-mono break-all border border-green-200";
         }
 
         window.updateTargetDose = (id, val) => {
@@ -694,6 +723,16 @@
                 p.targetDose = parseFloat(val) || 0;
                 renderDICOMSidebar(true); 
             }
+        };
+
+        // --- DYNAMIC OFFSET UPDATE ---
+        window.handleOffsetChange = (val) => {
+            const offset = parseFloat(val) || 0;
+            dwells.forEach(d => {
+                if (d.stepPosBase !== undefined) {
+                    d.displayedPosition = d.stepPosBase + offset;
+                }
+            });
         };
 
         // --- TOOLTIP FUNCTIONS ---
@@ -885,7 +924,7 @@
             canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr); canvas.style.width = `${rect.width}px`; canvas.style.height = `${rect.height}px`; 
 
-            // Only center the view when explicitly requested or during actual window resize event
+            // Center origin at center of canvas on resize
             offsetX = rect.width / 2;
             offsetY = rect.height / 2;
             
@@ -901,37 +940,40 @@
 
         function setMode(m) {
             const prevMode = mode;
-            mode = m;
+            
+            // Switching from DICOM to Manual acts as a reset
+            if (m === 'manual_reset') {
+                clearWork(true);
+                mode = 'dwell';
+            } else {
+                mode = m;
+            }
+
             const elements = ['tab-manual', 'tab-dicom', 'panel-manual', 'panel-dicom', 'canvas-container', 'manual-result-panel', 'dicom-result-panel', 'btn-dwell', 'btn-poi'];
             const ui = {}; elements.forEach(id => ui[id] = document.getElementById(id));
-            if (m === 'dicom') {
+            
+            if (mode === 'dicom') {
                 ui['tab-manual'].className = "py-3 text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors";
                 ui['tab-dicom'].className = "py-3 text-xs font-bold uppercase border-b-2 border-orange-500 text-orange-500 transition-colors";
                 ui['panel-manual'].classList.add('hidden'); ui['panel-dicom'].classList.remove('hidden'); ui['canvas-container'].classList.add('hidden-canvas');
                 ui['manual-result-panel'].classList.add('hidden'); ui['dicom-result-panel'].classList.remove('hidden');
                 updateCalculations(false);
             } else {
-                // From DICOM to Manual 2D acts as a full data reset
-                if (prevMode === 'dicom') {
-                    clearWork(true);
+                ui['tab-manual'].className = "py-3 text-xs font-bold uppercase border-b-2 border-blue-600 text-blue-600 transition-colors";
+                ui['tab-dicom'].className = "py-3 text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors";
+                ui['panel-manual'].classList.remove('hidden'); ui['panel-dicom'].classList.add('hidden'); ui['canvas-container'].classList.remove('hidden-canvas');
+                ui['manual-result-panel'].classList.remove('hidden'); ui['dicom-result-panel'].classList.add('hidden');
+                
+                if (mode === 'dwell') {
+                    ui['btn-dwell'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-red-500 bg-red-500 text-white shadow-md transition-all group active:scale-95";
+                    ui['btn-poi'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-slate-200 bg-white text-slate-600 shadow-sm transition-all group active:scale-95";
                 } else {
-                    // Manual internal switch (Add Dwell vs Add POI)
-                    ui['tab-manual'].className = "py-3 text-xs font-bold uppercase border-b-2 border-blue-600 text-blue-600 transition-colors";
-                    ui['tab-dicom'].className = "py-3 text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors";
-                    ui['panel-manual'].classList.remove('hidden'); ui['panel-dicom'].classList.add('hidden'); ui['canvas-container'].classList.remove('hidden-canvas');
-                    ui['manual-result-panel'].classList.remove('hidden'); ui['dicom-result-panel'].classList.add('hidden');
-                    
-                    if (m === 'dwell') {
-                        ui['btn-dwell'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-red-500 bg-red-500 text-white shadow-md transition-all group active:scale-95";
-                        ui['btn-poi'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-slate-200 bg-white text-slate-600 shadow-sm transition-all group active:scale-95";
-                    } else {
-                        ui['btn-dwell'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-slate-200 bg-white text-slate-600 shadow-sm transition-all group active:scale-95";
-                        ui['btn-poi'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-blue-600 bg-blue-600 text-white shadow-md transition-all group active:scale-95";
-                    }
-                    updateCalculations(false);
-                    // Do NOT call resizeCanvas() to preserve custom pan/zoom state
-                    requestAnimationFrame(() => { draw(); });
+                    ui['btn-dwell'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-slate-200 bg-white text-slate-600 shadow-sm transition-all group active:scale-95";
+                    ui['btn-poi'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-blue-600 bg-blue-600 text-white shadow-md transition-all group active:scale-95";
                 }
+                updateCalculations(false);
+                // Switch without resetting pan/zoom in manual mode
+                requestAnimationFrame(() => { draw(); });
             }
         }
 
@@ -1013,7 +1055,7 @@
             const px = offsetX + x*scale, py = offsetY + y*scale;
             ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#2563eb'; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
             ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(name, px, py-8);
-            if (dose !== null) { const txt = dose === Infinity ? 'Inf' : dose.toFixed(2); ctx.font = '14px Arial'; ctx.translate(px+22, py-32); ctx.rotate(-Math.PI/4); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(-2,-14,ctx.measureText(txt).width+4,16); ctx.fillStyle = '#1e40af'; ctx.textAlign = 'left'; ctx.fillText(txt, 0, 0); }
+            if (dose !== null) { const txt = (dose === Infinity) ? 'Inf' : dose.toFixed(2); ctx.font = '14px Arial'; ctx.translate(px+22, py-32); ctx.rotate(-Math.PI/4); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(-2,-14,ctx.measureText(txt).width+4,16); ctx.fillStyle = '#1e40af'; ctx.textAlign = 'left'; ctx.fillText(txt, 0, 0); }
             ctx.restore();
         }
 
@@ -1114,7 +1156,7 @@
                     p.details.forEach((d, i) => {
                         let row = `<tr>`;
                         if (i === 0) row += `<td rowspan="${p.details.length}" class="bg-slate-50 font-bold text-xs border-r">${p.name||`P${p.id}`}</td>`;
-                        row += `<td>#${d.dwellIdx}</td><td>${d.r}</td><td>${d.theta}</td><td>${d.GL}</td><td>${d.gL}</td><td>${d.F}</td><td class="font-medium">${d.dose === Infinity ? 'Inf' : d.dose.toFixed(4)}</td>`;
+                        row += `<td>#${d.dwellIdx}</td><td>${d.r}</td><td>${d.theta}</td><td>${d.GL}</td><td>${d.gL}</td><td>${d.F}</td><td class="font-medium">${(d.dose === Infinity ? 'Inf' : d.dose.toFixed(4))}</td>`;
                         if (i === 0) row += `<td rowspan="${p.details.length}" class="font-bold text-blue-700 border-l text-center">${(p.totalDose === Infinity ? 'Inf' : p.totalDose.toFixed(3))}</td>`;
                         row += `</tr>`;
                         body.innerHTML += row;
@@ -1124,11 +1166,15 @@
         }
 
         function clearWork(resetView = true) { 
-            dwells = []; pois = []; manualPositionSelection = "HFS";
-            const posEl = document.getElementById('dicom-position');
-            if (posEl) posEl.value = "HFS";
-            if(mode==='dicom') { document.getElementById('dicom-status').classList.add('hidden'); }
-            setMode('dwell');
+            dwells = []; pois = []; 
+            if(mode==='dicom') {
+                 // Requirement: Stay in DICOM mode and only reset local data
+                 document.getElementById('dicom-status').classList.add('hidden');
+                 document.getElementById('machine-name-display').textContent = "-";
+                 document.getElementById('dicom-offset-input').value = "0.00";
+            } else {
+                 setMode('dwell');
+            }
             if (resetView) setDefaultView();
             updateCalculations(false); 
         }
