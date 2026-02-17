@@ -16,7 +16,6 @@
         
         .sidebar-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white; }
         
-        /* Updated header font-size to 12px (text-xs) to match the results table */
         .sidebar-table th { background-color: #f8fafc; text-transform: none; font-size: 12px; color: #64748b; padding: 6px; border-bottom: 1px solid #e2e8f0; font-weight: 700; }
         
         .sidebar-table td { padding: 4px; border-bottom: 1px solid #f1f5f9; }
@@ -55,7 +54,7 @@
         .drop-zone { border: 2px dashed #cbd5e1; transition: all 0.3s; }
         .drop-zone.dragover { border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.05); }
 
-        /* Tooltip Style */
+        /* Tooltip Style (Horizontal Transposed Table) */
         #channel-tooltip {
             position: fixed;
             z-index: 1000;
@@ -65,7 +64,7 @@
             box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             padding: 12px;
-            font-size: 13px;
+            font-size: 13px; /* Tooltip font set to 13px */
             display: none;
             max-width: 80vw;
             max-height: 400px;
@@ -91,7 +90,7 @@
                 View TG43 Data
             </button>
 
-            <button id="btn-clear" class="px-3 py-1.5 bg-red text-red-500 border border-red-200 rounded-lg text-sm font-bold hover:bg-red-50 transition flex items-center gap-2">
+            <button id="btn-clear" class="px-3 py-1.5 bg-white text-red-500 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-50 transition flex items-center gap-2">
                 Reset
             </button>
         </div>
@@ -120,6 +119,7 @@
                     
                     <!-- MANUAL MODE CONTENT -->
                     <div id="panel-manual" class="space-y-4">
+                        <!-- Action Buttons -->
                         <div class="grid grid-cols-2 gap-3">
                             <button id="btn-dwell" class="flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-red-500 bg-red-500 text-white shadow-md hover:shadow-lg transition-all group active:scale-95">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
@@ -131,6 +131,7 @@
                             </button>
                         </div>
 
+                        <!-- Manual Settings -->
                         <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="space-y-1.5">
@@ -144,6 +145,7 @@
                             </div>
                         </div>
 
+                        <!-- Manual Dwell Table -->
                         <section>
                             <div class="flex items-center justify-between mb-2 px-1">
                                 <h3 class="text-[11px] font-bold text-slate-500 uppercase flex items-center gap-2">
@@ -166,6 +168,7 @@
                             </table>
                         </section>
 
+                        <!-- Manual POI Table -->
                         <section>
                             <div class="flex items-center justify-between mb-2 px-1">
                                 <h3 class="text-[11px] font-bold text-slate-500 uppercase flex items-center gap-2">
@@ -189,7 +192,7 @@
                         </section>
                     </div>
 
-                    <!-- DICOM SideBar Content -->
+                    <!-- DICOM SideBar -->
                     <div id="panel-dicom" class="hidden space-y-4">
                         <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-4">
                             <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
@@ -207,11 +210,11 @@
                         <!-- Device Information UI -->
                         <div id="dicom-machine-info" class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-2">
                              <div class="flex items-center justify-between">
-                                 <span class="text-[12px] font-bold text-slate-400">Afterloader Name:</span>
+                                 <span class="text-[12px] font-bold text-slate-400 uppercase">Machine Name:</span>
                                  <span id="machine-name-display" class="text-xs font-bold text-slate-700">-</span>
                              </div>
                              <div class="flex items-center justify-between">
-                                 <span class="text-[12px] font-bold text-slate-400">Dwell Position Offset (cm):</span>
+                                 <span class="text-[12px] font-bold text-slate-400 uppercase">Dwell Offset (cm):</span>
                                  <input type="number" id="dicom-offset-input" value="0.00" step="0.01" oninput="handleOffsetChange(this.value)" class="w-16 px-2 py-0.5 text-xs font-bold text-slate-700 bg-slate-50 border border-slate-300 rounded focus:border-blue-500 outline-none text-center">
                              </div>
                         </div>
@@ -225,8 +228,8 @@
                                     <thead>
                                         <tr>
                                             <th>Ch#</th>
-                                            <th># of Dwells</th>
-                                            <th>Dwell Time(s)</th>
+                                            <th>Dwells</th>
+                                            <th>Total Time</th>
                                         </tr>
                                     </thead>
                                     <tbody id="dicom-channel-body" class="text-[13px]">
@@ -239,9 +242,9 @@
                 </div>
             </div>
 
-            <!-- Right Panel: Canvas & Results -->
+            <!-- Right Panel -->
             <div class="flex-grow flex flex-col relative bg-white min-w-0">
-                <!-- Canvas Area -->
+                <!-- Canvas Container -->
                 <div id="canvas-container" class="relative flex-grow border-b overflow-hidden bg-yellow-50">
                     <canvas id="mainCanvas"></canvas>
                     
@@ -268,11 +271,11 @@
                     </div>
 
                     <div class="absolute bottom-4 left-4 bg-white/90 border border-slate-200 px-2 py-1 rounded-md text-[10px] text-slate-500 shadow-sm pointer-events-none font-medium z-10">
-                        Scroll: Zoom • Middle: Pan • Click: Add Point (Manual)
+                        Scroll: Zoom • Middle: Pan • Left Click: Add Point • Right Click: Flip Ghost Direction
                     </div>
                 </div>
 
-                <!-- DICOM Result Area -->
+                <!-- DICOM Result Sidebar -->
                 <div id="dicom-result-panel" class="hidden flex-grow flex flex-col p-6 bg-slate-50 overflow-auto bg-pattern">
                     <div class="max-w-6xl mx-auto w-full space-y-4">
                         <div class="flex items-center justify-between">
@@ -321,7 +324,7 @@
                                         <th class="p-3 border-b text-right">Diff %</th>
                                     </tr>
                                 </thead>
-                                <tbody id="dicom-main-table-body" class="divide-y divide-slate-100">
+                                <tbody id="dicom-main-table-body" class="divide-y divide-slate-100 text-[13px]">
                                     <tr><td colspan="8" class="p-6 text-center text-slate-400">No Reference Points found or file not loaded</td></tr>
                                 </tbody>
                              </table>
@@ -342,7 +345,7 @@
                             </h2>
                             <button id="btn-copy" class="px-2 py-1 bg-slate-800 text-white border border-slate-800 rounded-md text-[12px] font-bold hover:bg-slate-700 transition flex items-center gap-1.5 shadow-sm">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="16" x2="16" y1="8" y2="16"/><line x1="8" x2="8" y1="8" y2="16"/><line x1="3" x2="21" y1="12" y2="12"/></svg>
-                                Copy to Clipboard
+                                Copy Data
                             </button>
                         </div>
                         <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
@@ -360,7 +363,7 @@
             </div>
         </div>
 
-        <!-- TG-43 Data View -->
+        <!-- Data View -->
         <div id="tg43-data-view" class="hidden h-full w-full bg-slate-50 overflow-auto p-8">
             <div class="max-w-6xl mx-auto space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -388,7 +391,7 @@
         </div>
     </div>
 
-    <!-- Tooltip Element -->
+    <!-- Hover Tooltip Container -->
     <div id="channel-tooltip"></div>
 
     <script>
@@ -417,7 +420,7 @@
             [0.722, 0.722, 0.709, 0.696, 0.688, 0.681, 0.683, 0.686, 0.691, 0.697, 0.707, 0.718, 0.725, 0.734, 0.757, 0.770, 0.795, 0.817],
             [0.736, 0.736, 0.720, 0.705, 0.697, 0.692, 0.697, 0.700, 0.707, 0.712, 0.719, 0.729, 0.736, 0.745, 0.769, 0.780, 0.823],
             [0.732, 0.732, 0.726, 0.720, 0.715, 0.712, 0.713, 0.713, 0.719, 0.724, 0.731, 0.743, 0.751, 0.758, 0.779, 0.789, 0.810, 0.830],
-            [0.744, 0.744, 0.738, 0.733, 0.729, 0.726, 0.728, 0.727, 0.734, 0.738, 0.743, 0.754, 0.762, 0.769, 0.790, 0.799, 0.818, 0.837],
+            [0.744, 0.744, 0.738, 0.733, 0.729, 0.726, 0.728, 0.727, 0.734, 0.743, 0.754, 0.762, 0.769, 0.790, 0.799, 0.818, 0.837],
             [0.762, 0.762, 0.753, 0.743, 0.738, 0.738, 0.741, 0.740, 0.748, 0.752, 0.755, 0.765, 0.772, 0.778, 0.799, 0.808, 0.826, 0.844],
             [0.837, 0.837, 0.820, 0.803, 0.801, 0.802, 0.804, 0.802, 0.809, 0.811, 0.813, 0.821, 0.828, 0.829, 0.844, 0.848, 0.863, 0.873],
             [0.962, 0.962, 0.866, 0.855, 0.854, 0.852, 0.853, 0.852, 0.858, 0.858, 0.862, 0.865, 0.870, 0.869, 0.878, 0.880, 0.893, 0.900],
@@ -438,7 +441,7 @@
             [0.828, 0.828, 0.814, 0.801, 0.798, 0.796, 0.798, 0.801, 0.802, 0.806, 0.809, 0.818, 0.822, 0.829, 0.838, 0.843, 0.860, 0.8700],
             [0.789, 0.789, 0.756, 0.723, 0.720, 0.725, 0.725, 0.729, 0.730, 0.734, 0.743, 0.754, 0.761, 0.771, 0.784, 0.795, 0.819, 0.8311],
             [0.730, 0.730, 0.715, 0.700, 0.699, 0.706, 0.706, 0.710, 0.712, 0.716, 0.725, 0.735, 0.744, 0.755, 0.768, 0.782, 0.809, 0.8221],
-            [0.722, 0.722, 0.699, 0.676, 0.686, 0.686, 0.689, 0.692, 0.696, 0.705, 0.716, 0.725, 0.738, 0.752, 0.768, 0.798, 0.8114],
+            [0.722, 0.722, 0.699, 0.686, 0.686, 0.689, 0.692, 0.696, 0.705, 0.716, 0.725, 0.738, 0.752, 0.768, 0.798, 0.8114],
             [0.627, 0.627, 0.635, 0.642, 0.649, 0.664, 0.663, 0.666, 0.671, 0.675, 0.684, 0.695, 0.705, 0.719, 0.735, 0.752, 0.785, 0.7990],
             [0.574, 0.574, 0.596, 0.618, 0.640, 0.643, 0.641, 0.643, 0.650, 0.653, 0.662, 0.672, 0.684, 0.698, 0.715, 0.733, 0.769, 0.7840],
             [0.627, 0.627, 0.623, 0.619, 0.615, 0.611, 0.615, 0.616, 0.625, 0.627, 0.636, 0.646, 0.659, 0.674, 0.692, 0.713, 0.752, 0.769],
@@ -523,6 +526,7 @@
         let isPanning = false;
         let lastMousePos = { x: 0, y: 0 };
         let ghostPos = null; 
+        let ghostOrientation = {x: -1, y: 0, z: 0}; // Default pointing left
         let showContours = false;
         let isDataView = false;
         let manualPositionSelection = "HFS"; 
@@ -541,6 +545,16 @@
             canvas.addEventListener('mouseup', () => isPanning = false);
             canvas.addEventListener('mouseleave', () => { ghostPos = null; draw(); });
             canvas.addEventListener('wheel', handleWheel, { passive: false });
+
+            // Disable standard context menu on canvas to allow right-click flip only
+            canvas.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                if (mode === 'dwell' && ghostPos) {
+                    ghostOrientation.x *= -1; // Flip between -1 (left) and 1 (right)
+                    draw();
+                }
+                return false;
+            });
 
             document.getElementById('tab-manual').onclick = () => setMode('manual_reset'); 
             document.getElementById('tab-dicom').onclick = () => setMode('dicom');
@@ -613,13 +627,12 @@
             let modelName = dataset.ManufacturerModelName || "";
             
             // Search deep if generic software name ARIA is found or empty
-            if ((!modelName || modelName.includes("ARIA")) && dataset.TreatmentMachineSequence && dataset.TreatmentMachineSequence[0]) {
+            if ((!modelName || modelName.toUpperCase().includes("ARIA")) && dataset.TreatmentMachineSequence && dataset.TreatmentMachineSequence[0]) {
                 modelName = dataset.TreatmentMachineSequence[0].ManufacturerModelName || modelName;
             }
 
             document.getElementById('machine-name-display').textContent = modelName || "Unknown Machine";
             
-            // Set Default Offset based on keywords in model name
             let defaultOffset = 0.00;
             const lowerModel = modelName.toLowerCase();
             if (lowerModel.includes("bravos")) {
@@ -629,7 +642,7 @@
             }
             document.getElementById('dicom-offset-input').value = defaultOffset.toFixed(2);
 
-            // Position [0018, 5100] sync
+            // Position sync
             const posTag = dataset.PatientPosition || "HFS";
             document.getElementById('dicom-position').value = posTag;
             manualPositionSelection = posTag;
@@ -845,8 +858,8 @@
                 const totalEl = document.getElementById(`res-total-${p.id}`);
                 const diffEl = document.getElementById(`res-diff-${p.id}`);
 
-                if (doseEl) doseEl.textContent = sessionDose === Infinity ? 'Inf' : sessionDose.toFixed(3);
-                if (totalEl) totalEl.textContent = calculatedTotal === Infinity ? 'Inf' : calculatedTotal.toFixed(3);
+                if (doseEl) doseEl.textContent = (sessionDose === Infinity) ? 'Inf' : sessionDose.toFixed(3);
+                if (totalEl) totalEl.textContent = (calculatedTotal === Infinity) ? 'Inf' : calculatedTotal.toFixed(3);
                 
                 if (diffEl) {
                     if (tpsDose > 0 && calculatedTotal !== Infinity) {
@@ -899,7 +912,7 @@
             if (isDataView) {
                 calcView.classList.add('hidden'); calcView.classList.remove('flex'); dataView.classList.remove('hidden'); btn.classList.add('toggle-active'); btn.innerHTML = `Back to Calc`;
             } else {
-                dataView.classList.add('hidden'); calcView.classList.remove('hidden'); calcView.classList.add('flex'); btn.classList.remove('toggle-active'); btn.innerHTML = `View TG43U Data`;
+                dataView.classList.add('hidden'); calcView.classList.remove('hidden'); calcView.classList.add('flex'); btn.classList.remove('toggle-active'); btn.innerHTML = `View TG43 Data`;
                 if (mode !== 'dicom') requestAnimationFrame(() => { resizeCanvas(); setDefaultView(); draw(); });
             }
         }
@@ -924,7 +937,6 @@
             canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr); canvas.style.width = `${rect.width}px`; canvas.style.height = `${rect.height}px`; 
 
-            // Center origin at center of canvas on resize
             offsetX = rect.width / 2;
             offsetY = rect.height / 2;
             
@@ -940,8 +952,6 @@
 
         function setMode(m) {
             const prevMode = mode;
-            
-            // Switching from DICOM to Manual acts as a reset
             if (m === 'manual_reset') {
                 clearWork(true);
                 mode = 'dwell';
@@ -951,7 +961,6 @@
 
             const elements = ['tab-manual', 'tab-dicom', 'panel-manual', 'panel-dicom', 'canvas-container', 'manual-result-panel', 'dicom-result-panel', 'btn-dwell', 'btn-poi'];
             const ui = {}; elements.forEach(id => ui[id] = document.getElementById(id));
-            
             if (mode === 'dicom') {
                 ui['tab-manual'].className = "py-3 text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors";
                 ui['tab-dicom'].className = "py-3 text-xs font-bold uppercase border-b-2 border-orange-500 text-orange-500 transition-colors";
@@ -972,7 +981,6 @@
                     ui['btn-poi'].className = "flex flex-col items-center justify-center gap-2 h-20 rounded-xl border-2 border-blue-600 bg-blue-600 text-white shadow-md transition-all group active:scale-95";
                 }
                 updateCalculations(false);
-                // Switch without resetting pan/zoom in manual mode
                 requestAnimationFrame(() => { draw(); });
             }
         }
@@ -985,26 +993,31 @@
             const rect = canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
-
             const worldX = (mouseX - offsetX) / scale;
             const worldY = (mouseY - offsetY) / scale;
-
             const newScale = Math.max(10, Math.min(200, scale * factor));
             offsetX = mouseX - worldX * newScale;
             offsetY = mouseY - worldY * newScale;
             scale = newScale;
-
             draw(); 
         }
 
         function handleMouseDown(e) {
             if (e.button === 1) { isPanning = true; lastMousePos = { x: e.clientX, y: e.clientY }; return; }
             if (mode === 'dicom') return;
+            
+            // Only Left Click (0) to add points
+            if (e.button !== 0) return;
+
             const rect = canvas.getBoundingClientRect();
             let wx = Math.round(((e.clientX - rect.left - offsetX) / scale) * 2) / 2;
             let wy = Math.round(((e.clientY - rect.top - offsetY) / scale) * 2) / 2;
             if (mode === 'dwell') {
-                dwells.push({ x: wx, y: wy, z: 0, time: parseFloat(document.getElementById('dwell-time').value) });
+                dwells.push({ 
+                    x: wx, y: wy, z: 0, 
+                    time: parseFloat(document.getElementById('dwell-time').value),
+                    orientation: { ...ghostOrientation }
+                });
                 updateCalculations(false);
             }
             else if (mode === 'poi') {
@@ -1012,6 +1025,7 @@
                 updateCalculations(false);
             }
         }
+
         function handleMouseMove(e) {
             const rect = canvas.getBoundingClientRect();
             if (isPanning) { offsetX += e.clientX - lastMousePos.x; offsetY += e.clientY - lastMousePos.y; lastMousePos = { x: e.clientX, y: e.clientY }; ghostPos = null; }
@@ -1022,7 +1036,6 @@
         function drawGrid() {
             const s = scale, width = canvas.clientWidth, height = canvas.clientHeight;
             if (!width || !height || isNaN(offsetX) || isNaN(offsetY)) return;
-            
             ctx.save(); ctx.beginPath(); ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1.0; ctx.setLineDash([2, 4]); 
             for (let x = offsetX % (0.5*s); x < width; x += 0.5*s) { ctx.moveTo(x, 0); ctx.lineTo(x, height); }
             for (let y = offsetY % (0.5*s); y < height; y += 0.5*s) { ctx.moveTo(0, y); ctx.lineTo(width, y); }
@@ -1030,25 +1043,26 @@
             for (let x = offsetX % s; x < width; x += s) { ctx.moveTo(x, 0); ctx.lineTo(x, height); }
             for (let y = offsetY % s; y < height; y += s) { ctx.moveTo(0, y); ctx.lineTo(width, y); }
             ctx.stroke(); ctx.beginPath(); ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2.0; ctx.moveTo(0, offsetY); ctx.lineTo(width, offsetY); ctx.moveTo(offsetX, 0); ctx.lineTo(offsetX, height); ctx.stroke();
-            
             ctx.font = '13px Arial'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center';
             for (let i = -20; i <= 20; i++) { 
                 if (i !== 0) { 
                     const xl = offsetX + i * s; const yl = offsetY + i * s;
                     if (!isNaN(xl)) ctx.fillText(String(i), xl, offsetY + 15); 
-                    if (!isNaN(yl)) {
-                        ctx.textAlign = 'right'; 
-                        ctx.fillText(String(-i), offsetX - 6, yl + 4); 
-                        ctx.textAlign = 'center'; 
-                    }
+                    if (!isNaN(yl)) { ctx.textAlign = 'right'; ctx.fillText(String(-i), offsetX - 6, yl + 4); ctx.textAlign = 'center'; }
                 } 
             }
         }
 
-        function drawSource(x, y, alpha = 1.0) {
+        function drawSource(x, y, alpha = 1.0, orientation = {x: -1, y: 0, z: 0}) {
             const px = offsetX + x*scale, py = offsetY + y*scale, len = EFFECTIVE_L*scale*1.3;
             ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(px-len/2, py); ctx.lineTo(px+len/2, py); ctx.stroke();
-            ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.moveTo(px-len/2-18, py); ctx.lineTo(px-len/2, py-12); ctx.lineTo(px-len/2, py+12); ctx.closePath(); ctx.fill(); ctx.restore();
+            ctx.fillStyle = '#ef4444'; ctx.beginPath();
+            if (orientation.x < 0) {
+                ctx.moveTo(px-len/2-18, py); ctx.lineTo(px-len/2, py-12); ctx.lineTo(px-len/2, py+12);
+            } else {
+                ctx.moveTo(px+len/2+18, py); ctx.lineTo(px+len/2, py-12); ctx.lineTo(px+len/2, py+12);
+            }
+            ctx.closePath(); ctx.fill(); ctx.restore();
         }
 
         function drawPOI(name, x, y, dose = null, alpha = 1.0) {
@@ -1103,8 +1117,21 @@
 
         function draw() {
             ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight); drawGrid(); if (showContours) drawIsodoseContours();
-            dwells.forEach(d => drawSource(d.x, d.y)); pois.forEach(p => drawPOI(p.name||`P${p.id}`, p.x, p.y, p.totalDose));
-            if (ghostPos && !isPanning && mode !== 'dicom') { if (mode === 'dwell') drawSource(ghostPos.x, ghostPos.y, 0.4); else drawPOI("", ghostPos.x, ghostPos.y, null, 0.4); }
+            dwells.forEach(d => drawSource(d.x, d.y, 1.0, d.orientation)); 
+            pois.forEach(p => drawPOI(p.name||`P${p.id}`, p.x, p.y, p.totalDose));
+            if (ghostPos && !isPanning && mode !== 'dicom') { 
+                if (mode === 'dwell') {
+                    drawSource(ghostPos.x, ghostPos.y, 0.4, ghostOrientation);
+                    // Visual Hint Tooltip for Right-Click
+                    ctx.save();
+                    ctx.fillStyle = "rgba(100, 116, 139, 0.9)";
+                    ctx.font = "bold 11px Arial";
+                    ctx.fillText("Right-click to flip", offsetX + ghostPos.x * scale + 15, offsetY + ghostPos.y * scale - 15);
+                    ctx.restore();
+                } else {
+                    drawPOI("", ghostPos.x, ghostPos.y, null, 0.4);
+                }
+            }
         }
 
         function updateCalculations(onlyResults = true) {
@@ -1114,9 +1141,10 @@
                 dwells.forEach((d, idx) => {
                     const dx=poi.x-d.x, dy=poi.y-d.y, dz=poi.z-d.z, r=Math.sqrt(dx*dx+dy*dy+dz*dz);
                     let th = d.orientation ? Math.acos(Math.max(-1, Math.min(1, (dx*d.orientation.x + dy*d.orientation.y + dz*d.orientation.z)/r))) * 180 / Math.PI : Math.abs(Math.atan2(dy, -dx) * 180 / Math.PI);
-                    const GL = calcGeometryFactor(r, th*Math.PI/180)/G_ref, gL = get_gL(r), F = get_F(r, th);
-                    const dDose = r < 0.05 ? Infinity : (Sk*doseRateConstant*GL*gL*F/100)*(d.time / 3600);
-                    if(!isNaN(dDose)) { total += dDose; poi.details.push({ dwellIdx: idx+1, r: r.toFixed(2), theta: th.toFixed(1), GL: GL.toFixed(4), gL: gL.toFixed(4), F: F.toFixed(4), dose: dDose }); }
+                    const GL_val = calcGeometryFactor(r, th*Math.PI/180);
+                    const GL_ratio = GL_val/G_ref, gL = get_gL(r), F = get_F(r, th);
+                    const dDose = r < 0.05 ? Infinity : (Sk*doseRateConstant*GL_ratio*gL*F/100)*(d.time / 3600);
+                    if(!isNaN(dDose)) { total += dDose; poi.details.push({ dwellIdx: idx+1, r: r.toFixed(2), theta: th.toFixed(1), GL: GL_val.toFixed(4), Gref: G_ref.toFixed(4), gL: gL.toFixed(4), F: F.toFixed(4), dose: dDose }); }
                 });
                 poi.totalDose = total;
             });
@@ -1147,7 +1175,7 @@
             if (tableView === 'simple') {
                 ['Name', 'X (cm)', 'Y (cm)', 'Z (cm)', 'Total Dose (Gy)'].forEach(txt => { const th = document.createElement('th'); th.textContent = txt; thr.appendChild(th); });
             } else {
-                ['Name', 'Dwell', 'r (cm)', 'θ (°)', 'G_L/G_ref', 'g_L(r)', 'F(r,θ)', 'Dose (Gy)', 'Total Dose (Gy)'].forEach(txt => { const th = document.createElement('th'); th.textContent = txt; thr.appendChild(th); });
+                ['Name', 'Dwell', 'r (cm)', 'θ (°)', 'G_L', 'G_ref', 'g_L(r)', 'F(r,θ)', 'Dose (Gy)', 'Total Dose (Gy)'].forEach(txt => { const th = document.createElement('th'); th.textContent = txt; thr.appendChild(th); });
             }
             head.appendChild(thr);
             pois.forEach(p => {
@@ -1156,7 +1184,7 @@
                     p.details.forEach((d, i) => {
                         let row = `<tr>`;
                         if (i === 0) row += `<td rowspan="${p.details.length}" class="bg-slate-50 font-bold text-xs border-r">${p.name||`P${p.id}`}</td>`;
-                        row += `<td>#${d.dwellIdx}</td><td>${d.r}</td><td>${d.theta}</td><td>${d.GL}</td><td>${d.gL}</td><td>${d.F}</td><td class="font-medium">${(d.dose === Infinity ? 'Inf' : d.dose.toFixed(4))}</td>`;
+                        row += `<td>#${d.dwellIdx}</td><td>${d.r}</td><td>${d.theta}</td><td>${d.GL}</td><td>${d.Gref}</td><td>${d.gL}</td><td>${d.F}</td><td class="font-medium">${(d.dose === Infinity ? 'Inf' : d.dose.toFixed(4))}</td>`;
                         if (i === 0) row += `<td rowspan="${p.details.length}" class="font-bold text-blue-700 border-l text-center">${(p.totalDose === Infinity ? 'Inf' : p.totalDose.toFixed(3))}</td>`;
                         row += `</tr>`;
                         body.innerHTML += row;
@@ -1166,9 +1194,8 @@
         }
 
         function clearWork(resetView = true) { 
-            dwells = []; pois = []; 
+            dwells = []; pois = []; manualPositionSelection = "HFS"; ghostOrientation = {x: -1, y: 0, z: 0};
             if(mode==='dicom') {
-                 // Requirement: Stay in DICOM mode and only reset local data
                  document.getElementById('dicom-status').classList.add('hidden');
                  document.getElementById('machine-name-display').textContent = "-";
                  document.getElementById('dicom-offset-input').value = "0.00";
@@ -1190,12 +1217,12 @@
                     text += r.join("\t") + "\n";
                 }
             } else {
-                text = "Name\tDwell\tr (cm)\tθ (°)\tG_L/G_ref\tg_L(r)\tF(r,θ)\tDose (Gy)\tTotal Dose (Gy)\n";
+                text = "Name\tDwell\tr (cm)\tθ (°)\tG_L\tG_ref\tg_L(r)\tF(r,θ)\tDose (Gy)\tTotal Dose (Gy)\n";
                 pois.forEach(p => {
                     p.details.forEach((d, i) => {
                         const name = i === 0 ? (p.name || `P${p.id}`) : "";
                         const total = i === 0 ? (p.totalDose === Infinity ? "Inf" : p.totalDose.toFixed(3)) : "";
-                        text += `${name}\t#${d.dwellIdx}\t${d.r}\t${d.theta}\t${d.GL}\t${d.gL}\t${d.F}\t${d.dose === Infinity ? "Inf" : d.dose.toFixed(4)}\t${total}\n`;
+                        text += `${name}\t#${d.dwellIdx}\t${d.r}\t${d.theta}\t${d.GL}\t${d.Gref}\t${d.gL}\t${d.F}\t${d.dose === Infinity ? "Inf" : d.dose.toFixed(4)}\t${total}\n`;
                     });
                 });
             }
