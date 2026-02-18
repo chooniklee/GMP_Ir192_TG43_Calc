@@ -1190,8 +1190,8 @@
                     p.details.forEach((d, i) => {
                         let row = `<tr>`;
                         if (i === 0) row += `<td rowspan="${p.details.length}" class="bg-slate-50 font-bold text-xs border-r">${p.name||`P${p.id}`}</td>`;
-                        row += `<td>#${d.dwellIdx}</td><td>${d.r}</td><td>${d.theta}</td><td>${d.GL}</td><td>${d.Gref}</td><td>${d.gL}</td><td>${d.F}</td><td class="font-medium">${(d.dose === Infinity ? 'Inf' : d.dose.toFixed(4))}</td>`;
-                        if (i === 0) row += `<td rowspan="${p.details.length}" class="font-bold text-blue-700 border-l text-center">${(p.totalDose === Infinity ? 'Inf' : p.totalDose.toFixed(3))}</td>`;
+                        row += `<td>#${d.dwellIdx}</td><td>${d.r}</td><td>${d.theta}</td><td>${d.GL}</td><td>${d.Gref}</td><td>${d.gL}</td><td>${d.F}</td><td class="font-medium">${(d.dose === Infinity ? 'Inf' : d.dose.toFixed(3))}</td>`;
+                        if (i === 0) row += `<td rowspan="${p.details.length}" class="font-bold text-blue-700 border-l">${(p.totalDose === Infinity ? 'Inf' : p.totalDose.toFixed(3))}</td>`;
                         row += `</tr>`;
                         body.innerHTML += row;
                     });
@@ -1228,7 +1228,7 @@
                     p.details.forEach((d, i) => {
                         const name = i === 0 ? (p.name || `P${p.id}`) : "";
                         const total = i === 0 ? (p.totalDose === Infinity ? "Inf" : p.totalDose.toFixed(3)) : "";
-                        text += `${name}\t#${d.dwellIdx}\t${d.r}\t${d.theta}\t${d.GL}\t${d.Gref}\t${d.gL}\t${d.F}\t${d.dose === Infinity ? "Inf" : d.dose.toFixed(4)}\t${total}\n`;
+                        text += `${name}\t#${d.dwellIdx}\t${d.r}\t${d.theta}\t${d.GL}\t${d.Gref}\t${d.gL}\t${d.F}\t${d.dose === Infinity ? "Inf" : d.dose.toFixed(3)}\t${total}\n`;
                     });
                 });
             }
