@@ -79,10 +79,10 @@
 <body class="bg-gray-100 h-screen flex flex-col transition-colors duration-200">
 
     <!-- Header / Global Actions -->
-    <div class="bg-white border-b px-4 py-3 flex items-center justify-between shadow-sm z-10 h-[60px]">
-        <h1 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <span class="text-red-600 text-xl">☢</span> 
-            <span>GammaMed Plus <sup class="text-gray-500 font-medium">192</sup>Ir TG-43U Physics Check</span>
+    <div class="bg-[#00274C] border-b px-4 py-3 flex items-center justify-between shadow-sm z-10 h-[70px]">
+        <h1 class="text-xl font-bold text-[#FFCB05] flex items-center gap-2">
+            <span class="text-red-600 text-2xl">☢</span> 
+            <span>GammaMed Plus / BRAVOS <sup class="text-[#FFCB05] font-medium">192</sup>Ir TG-43 Physics 2nd Checker</span>
         </h1>
         
         <div class="flex gap-2">
@@ -90,7 +90,7 @@
                 View TG43 Data
             </button>
 
-            <button id="btn-clear" class="px-3 py-1.5 bg-white text-red-500 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-50 transition flex items-center gap-2">
+            <button id="btn-clear" class="px-3 py-1.5 bg-white text-red-500 border border-red-200 rounded-lg text-sm font-bold hover:bg-red-50 transition flex items-center gap-2">
                 Reset
             </button>
         </div>
@@ -270,7 +270,7 @@
                         </button>
                     </div>
 
-                    <div class="absolute bottom-4 left-4 bg-white/90 border border-slate-200 px-2 py-1 rounded-md text-[10px] text-slate-500 shadow-sm pointer-events-none font-medium z-10">
+                    <div class="absolute bottom-4 left-4 bg-white/90 border border-slate-200 px-2 py-1 rounded-md text-[13px] text-slate-500 shadow-sm pointer-events-none font-medium z-10">
                         Scroll: Zoom • Middle: Pan • Left Click: Add Point • Right Click: Flip Source Direction
                     </div>
                 </div>
@@ -349,8 +349,8 @@
                             </button>
                         </div>
                         <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-                            <button id="btn-simple" class="text-[12px] px-3 py-1 rounded-md transition font-bold btn-active">Summary</button>
-                            <button id="btn-detailed" class="text-[12px] px-3 py-1 rounded-md transition font-bold text-slate-500 hover:text-slate-800">TG-43 Detail</button>
+                            <button id="btn-simple" class="text-[14px] px-3 py-1 rounded-md transition font-bold btn-active">Summary</button>
+                            <button id="btn-detailed" class="text-[14px] px-3 py-1 rounded-md transition font-bold text-slate-500 hover:text-slate-800">TG-43 Detail</button>
                         </div>
                     </div>
                     <div class="scroll-area-table border border-slate-200 rounded-lg bg-white">
@@ -1047,10 +1047,17 @@
             for (let i = -20; i <= 20; i++) { 
                 if (i !== 0) { 
                     const xl = offsetX + i * s; const yl = offsetY + i * s;
-                    if (!isNaN(xl)) ctx.fillText(String(i), xl, offsetY + 15); 
-                    if (!isNaN(yl)) { ctx.textAlign = 'right'; ctx.fillText(String(-i), offsetX - 6, yl + 4); ctx.textAlign = 'center'; }
+                    if (!isNaN(xl)) ctx.fillText(String(i), xl, offsetY + 18); 
+                    if (!isNaN(yl)) { ctx.textAlign = 'right'; ctx.fillText(String(-i), offsetX - 14, yl + 4); ctx.textAlign = 'center'; }
                 } 
             }
+        // --- unit 표시만 추가 ---
+			ctx.fillStyle = '#334155'; ctx.font = '20px Arial'; 
+		// X축 끝
+		ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText('(cm)', width - 28, offsetY + 6);
+		// Y축 위쪽
+		ctx.save(); ctx.translate(offsetX+5, 14); ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText('(cm)', 0, 0); ctx.restore();
+        
         }
 
         function drawSource(x, y, alpha = 1.0, orientation = {x: -1, y: 0, z: 0}) {
@@ -1068,8 +1075,8 @@
         function drawPOI(name, x, y, dose = null, alpha = 1.0) {
             const px = offsetX + x*scale, py = offsetY + y*scale;
             ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#2563eb'; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
-            ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(name, px, py-8);
-            if (dose !== null) { const txt = (dose === Infinity) ? 'Inf' : dose.toFixed(3); ctx.font = '14px Arial'; ctx.translate(px+22, py-32); ctx.rotate(-Math.PI/4); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(-2,-14,ctx.measureText(txt).width+4,16); ctx.fillStyle = '#1e40af'; ctx.textAlign = 'left'; ctx.fillText(txt, 0, 0); }
+            ctx.font = 'bold 13px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(name, px, py-8);
+            if (dose !== null) { const txt = (dose === Infinity) ? 'Inf' : dose.toFixed(3); ctx.font = '14px Arial'; ctx.translate(px+12, py-22); ctx.rotate(-Math.PI/4); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(-2,-14,ctx.measureText(txt).width+4,16); ctx.fillStyle = '#1e40af'; ctx.textAlign = 'left'; ctx.fillText(txt, 0, 0); }
             ctx.restore();
         }
 
