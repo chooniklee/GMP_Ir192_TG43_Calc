@@ -79,10 +79,10 @@
 <body class="bg-gray-100 h-screen flex flex-col transition-colors duration-200">
 
     <!-- Header / Global Actions -->
-    <div class="bg-[#00274C] border-b px-4 py-3 flex items-center justify-between shadow-sm z-10 h-[70px]">
-        <h1 class="text-xl font-bold text-[#FFCB05] flex items-center gap-2">
-            <span class="text-red-600 text-2xl">☢</span> 
-            <span>GammaMed Plus / BRAVOS <sup class="text-[#FFCB05] font-medium">192</sup>Ir TG-43 Physics 2nd Checker</span>
+    <div class="bg-[#00274C] border-b border-[#00274C] px-4 py-3 flex items-center justify-between shadow-sm z-10 h-[60px]">
+        <h1 class="text-lg font-bold text-[#FFCB05] flex items-center gap-2">
+            <span class="text-red-600 text-xl">☢</span> 
+            <span>GammaMed Plus / Bravos <sup class="text-[#FFCB05] font-medium">192</sup>Ir TG-43 Physics 2nd Checker</span>
         </h1>
         
         <div class="flex gap-2">
@@ -252,7 +252,7 @@
                         <div class="bg-white/95 border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm backdrop-blur-sm font-bold text-xs text-slate-600 pointer-events-none flex items-center gap-3">
                             <div class="flex items-center gap-1.5">
                                 <svg width="24" height="12" viewBox="0 0 24 12" class="text-red-500">
-                                    <line x1="8" x2="20" y2="6" stroke="currentColor" stroke-width="2" />
+                                    <line x1="8" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" />
                                     <path d="M8 2 L0 6 L8 10 Z" fill="currentColor" />
                                 </svg>
                                 <span>Source (XY Proj)</span>
@@ -270,7 +270,7 @@
                         </button>
                     </div>
 
-                    <div class="absolute bottom-4 left-4 bg-white/90 border border-slate-200 px-2 py-1 rounded-md text-[13px] text-slate-500 shadow-sm pointer-events-none font-medium z-10">
+                    <div class="absolute bottom-4 left-4 bg-white/90 border border-slate-200 px-2 py-1 rounded-md text-[12px] text-slate-500 shadow-sm pointer-events-none font-medium z-10">
                         Scroll: Zoom • Middle: Pan • Left Click: Add Point • Right Click: Flip Source Direction
                     </div>
                 </div>
@@ -344,13 +344,13 @@
                                 Calculation Results
                             </h2>
                             <button id="btn-copy" class="px-2 py-1 bg-slate-800 text-white border border-slate-800 rounded-md text-[12px] font-bold hover:bg-slate-700 transition flex items-center gap-1.5 shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" ry="2"/><line x1="16" x2="16" y1="8" y2="16"/><line x1="8" x2="8" y1="8" y2="16"/><line x1="3" x2="21" y1="12" y2="12"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="16" x2="16" y1="8" y2="16"/><line x1="8" x2="8" y1="8" y2="16"/><line x1="3" x2="21" y1="12" y2="12"/></svg>
                                 Copy Data
                             </button>
                         </div>
                         <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-                            <button id="btn-simple" class="text-[14px] px-3 py-1 rounded-md transition font-bold btn-active">Summary</button>
-                            <button id="btn-detailed" class="text-[14px] px-3 py-1 rounded-md transition font-bold text-slate-500 hover:text-slate-800">TG-43 Detail</button>
+                            <button id="btn-simple" class="text-[12px] px-3 py-1 rounded-md transition font-bold btn-active">Summary</button>
+                            <button id="btn-detailed" class="text-[12px] px-3 py-1 rounded-md transition font-bold text-slate-500 hover:text-slate-800">TG-43 Detail</button>
                         </div>
                     </div>
                     <div class="scroll-area-table border border-slate-200 rounded-lg bg-white">
@@ -363,7 +363,7 @@
             </div>
         </div>
 
-        <!-- Data View -->
+        <!-- Data View Area -->
         <div id="tg43-data-view" class="hidden h-full w-full bg-slate-50 overflow-auto p-8">
             <div class="max-w-6xl mx-auto space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -409,7 +409,7 @@
 
         const r_headers = [0, 0.2, 0.4, 0.6, 0.8, 1, 1.25, 1.5, 1.75, 2, 2.5, 3, 3.5, 4, 5, 6, 8, 10];
         const theta_rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 165, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180];
-                
+        
         const F_table = [
         [0.6948,0.6948,0.6656,0.6364,0.6298,0.6077,0.6153,0.6340,0.6248,0.6290,0.6481,0.6537,0.6602,0.6830,0.7021,0.7160,0.7581,0.7889],
         [0.7106,0.7106,0.6769,0.6432,0.6320,0.6090,0.6144,0.6316,0.6257,0.6331,0.6562,0.6668,0.6758,0.6977,0.7161,0.7274,0.7617,0.7858],
@@ -527,7 +527,7 @@
         let isPanning = false;
         let lastMousePos = { x: 0, y: 0 };
         let ghostPos = null; 
-        let ghostOrientation = {x: -1, y: 0, z: 0}; // Default pointing left
+        let ghostOrientation = {x: -1, y: 0, z: 0}; 
         let showContours = false;
         let isDataView = false;
         let manualPositionSelection = "HFS"; 
@@ -551,7 +551,7 @@
             canvas.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
                 if (mode === 'dwell' && ghostPos) {
-                    ghostOrientation.x *= -1; // Flip between -1 (left) and 1 (right)
+                    ghostOrientation.x *= -1; 
                     draw();
                 }
                 return false;
@@ -624,16 +624,11 @@
             clearWork(false); 
             mode = 'dicom'; 
             
-            // Extract Device Model Name from Sequence prioritising Hardware over Software ARIA tags
-            let modelName = "";
-            if (dataset.TreatmentMachineSequence && dataset.TreatmentMachineSequence[0]) {
-                modelName = dataset.TreatmentMachineSequence[0].ManufacturerModelName || "";
+            let modelName = dataset.ManufacturerModelName || "";
+            if ((!modelName || modelName.toUpperCase().includes("ARIA")) && dataset.TreatmentMachineSequence && dataset.TreatmentMachineSequence[0]) {
+                modelName = dataset.TreatmentMachineSequence[0].ManufacturerModelName || modelName;
             }
-            if (!modelName || modelName.toUpperCase().includes("ARIA")) {
-                modelName = dataset.ManufacturerModelName || modelName || "Unknown Machine";
-            }
-
-            document.getElementById('machine-name-display').textContent = modelName;
+            document.getElementById('machine-name-display').textContent = modelName || "Unknown Machine";
             
             let defaultOffset = 0.00;
             const lowerModel = modelName.toLowerCase();
@@ -644,7 +639,6 @@
             }
             document.getElementById('dicom-offset-input').value = defaultOffset.toFixed(2);
 
-            // Position sync
             const posTag = dataset.PatientPosition || "HFS";
             document.getElementById('dicom-position').value = posTag;
             manualPositionSelection = posTag;
@@ -938,8 +932,7 @@
             if (rect.width === 0 || rect.height === 0) return;
             canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr); canvas.style.width = `${rect.width}px`; canvas.style.height = `${rect.height}px`; 
-            offsetX = rect.width / 2;
-            offsetY = rect.height / 2;
+            
             draw();
         }
 
@@ -1011,7 +1004,7 @@
 
             const rect = canvas.getBoundingClientRect();
             let wx = Math.round(((e.clientX - rect.left - offsetX) / scale) * 2) / 2;
-            let wy = Math.round(((e.clientY - rect.top - offsetY) / scale) * 2) / 2;
+            let wy = Math.round(((offsetY - (e.clientY - rect.top)) / scale) * 2) / 2;
             if (mode === 'dwell') {
                 dwells.push({ 
                     x: wx, y: wy, z: 0, 
@@ -1029,7 +1022,7 @@
         function handleMouseMove(e) {
             const rect = canvas.getBoundingClientRect();
             if (isPanning) { offsetX += e.clientX - lastMousePos.x; offsetY += e.clientY - lastMousePos.y; lastMousePos = { x: e.clientX, y: e.clientY }; ghostPos = null; }
-            else ghostPos = { x: Math.round(((e.clientX - rect.left - offsetX) / scale) * 2) / 2, y: Math.round(((e.clientY - rect.top - offsetY) / scale) * 2) / 2 };
+            else ghostPos = { x: Math.round(((e.clientX - rect.left - offsetX) / scale) * 2) / 2, y: Math.round(((offsetY - (e.clientY - rect.top)) / scale) * 2) / 2 };
             draw();
         }
 
@@ -1046,22 +1039,15 @@
             ctx.font = '13px Arial'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center';
             for (let i = -20; i <= 20; i++) { 
                 if (i !== 0) { 
-                    const xl = offsetX + i * s; const yl = offsetY + i * s;
-                    if (!isNaN(xl)) ctx.fillText(String(i), xl, offsetY + 18); 
-                    if (!isNaN(yl)) { ctx.textAlign = 'right'; ctx.fillText(String(-i), offsetX - 14, yl + 4); ctx.textAlign = 'center'; }
+                    const xl = offsetX + i * s; const yl = offsetY - i * s; 
+                    if (!isNaN(xl)) ctx.fillText(String(i), xl, offsetY + 15); 
+                    if (!isNaN(yl)) { ctx.textAlign = 'right'; ctx.fillText(String(i), offsetX - 6, yl + 4); ctx.textAlign = 'center'; }
                 } 
             }
-        // --- unit 표시만 추가 ---
-			ctx.fillStyle = '#334155'; ctx.font = '20px Arial'; 
-		// X축 끝
-		ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText('(cm)', width - 28, offsetY + 6);
-		// Y축 위쪽
-		ctx.save(); ctx.translate(offsetX+5, 14); ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText('(cm)', 0, 0); ctx.restore();
-        
         }
 
         function drawSource(x, y, alpha = 1.0, orientation = {x: -1, y: 0, z: 0}) {
-            const px = offsetX + x*scale, py = offsetY + y*scale, len = EFFECTIVE_L*scale*1.3;
+            const px = offsetX + x*scale, py = offsetY - y*scale, len = EFFECTIVE_L*scale*1.3;
             ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(px-len/2, py); ctx.lineTo(px+len/2, py); ctx.stroke();
             ctx.fillStyle = '#ef4444'; ctx.beginPath();
             if (orientation.x < 0) {
@@ -1073,10 +1059,10 @@
         }
 
         function drawPOI(name, x, y, dose = null, alpha = 1.0) {
-            const px = offsetX + x*scale, py = offsetY + y*scale;
+            const px = offsetX + x*scale, py = offsetY - y*scale;
             ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#2563eb'; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
-            ctx.font = 'bold 13px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(name, px, py-8);
-            if (dose !== null) { const txt = (dose === Infinity) ? 'Inf' : dose.toFixed(3); ctx.font = '14px Arial'; ctx.translate(px+12, py-22); ctx.rotate(-Math.PI/4); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(-2,-14,ctx.measureText(txt).width+4,16); ctx.fillStyle = '#1e40af'; ctx.textAlign = 'left'; ctx.fillText(txt, 0, 0); }
+            ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(name, px, py-8);
+            if (dose !== null) { const txt = (dose === Infinity) ? 'Inf' : dose.toFixed(3); ctx.font = '14px Arial'; ctx.translate(px+22, py-32); ctx.rotate(-Math.PI/4); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(-2,-14,ctx.measureText(txt).width+4,16); ctx.fillStyle = '#1e40af'; ctx.textAlign = 'left'; ctx.fillText(txt, 0, 0); }
             ctx.restore();
         }
 
@@ -1105,7 +1091,7 @@
             const step = 4, w = canvas.clientWidth, h = canvas.clientHeight, ref = getNormalizationDose(), lvls = [0.05, 0.20, 0.40, 0.60, 0.80, 1.00, 1.50, 2.00], clrs = ["#3b82f6", "#06b6d4", "#10b981", "#84cc16", "#eab308", "#f97316", "#ef4444", "#d946ef"];
             const cols = Math.ceil(w/step)+1, rows = Math.ceil(h/step)+1, grid = new Float32Array(cols*rows);
             for(let j=0; j<rows; j++) for(let i=0; i<cols; i++) {
-                const val = calculateDoseAtPoint((i*step-offsetX)/scale, (j*step-offsetY)/scale, 0);
+                const val = calculateDoseAtPoint((i*step-offsetX)/scale, (offsetY-j*step)/scale, 0);
                 grid[j*cols+i] = val === Infinity ? 999 : val/ref;
             }
             ctx.lineWidth = 1.5;
@@ -1132,7 +1118,7 @@
                     ctx.save();
                     ctx.fillStyle = "rgba(100, 116, 139, 0.9)";
                     ctx.font = "bold 11px Arial";
-                    ctx.fillText("Right-click to flip", offsetX + ghostPos.x * scale + 15, offsetY + ghostPos.y * scale - 15);
+                    ctx.fillText("Right-click to flip", offsetX + ghostPos.x * scale + 15, offsetY - ghostPos.y * scale - 15);
                     ctx.restore();
                 } else {
                     drawPOI("", ghostPos.x, ghostPos.y, null, 0.4);
@@ -1147,10 +1133,26 @@
                 dwells.forEach((d, idx) => {
                     const dx=poi.x-d.x, dy=poi.y-d.y, dz=poi.z-d.z, r=Math.sqrt(dx*dx+dy*dy+dz*dz);
                     let th = d.orientation ? Math.acos(Math.max(-1, Math.min(1, (dx*d.orientation.x + dy*d.orientation.y + dz*d.orientation.z)/r))) * 180 / Math.PI : Math.abs(Math.atan2(dy, -dx) * 180 / Math.PI);
-                    const GL_val = calcGeometryFactor(r, th*Math.PI/180);
+                    const th_rad = th * Math.PI / 180;
+                    
+                    let beta = 0;
+                    if (th_rad !== 0 && th_rad !== Math.PI) {
+                        const y = r * Math.sin(th_rad);
+                        const x = r * Math.cos(th_rad);
+                        const theta1 = Math.atan2(y, x - EFFECTIVE_L/2);
+                        const theta2 = Math.atan2(y, x + EFFECTIVE_L/2);
+                        beta = Math.abs(theta1 - theta2);
+                    }
+
+                    const GL_val = calcGeometryFactor(r, th_rad);
                     const GL_ratio = GL_val/G_ref, gL = get_gL(r), F = get_F(r, th);
                     const dDose = r < 0.05 ? Infinity : (Sk*doseRateConstant*GL_ratio*gL*F/100)*(d.time / 3600);
-                    if(!isNaN(dDose)) { total += dDose; poi.details.push({ dwellIdx: idx+1, r: r.toFixed(2), theta: th.toFixed(1), GL: GL_val.toFixed(4), Gref: G_ref.toFixed(4), gL: gL.toFixed(4), F: F.toFixed(4), dose: dDose }); }
+                    if(!isNaN(dDose)) { 
+                        total += dDose; 
+                        poi.details.push({ 
+                            dwellIdx: idx+1, r: r.toFixed(2), theta: th.toFixed(1), beta: beta.toFixed(4), GL: GL_val.toFixed(4), Gref: G_ref.toFixed(4), gL: gL.toFixed(4), F: F.toFixed(4), dose: dDose 
+                        }); 
+                    }
                 });
                 poi.totalDose = total;
             });
@@ -1164,7 +1166,7 @@
             document.getElementById('dwell-count').innerText = dwells.length; document.getElementById('poi-count').innerText = pois.length;
             if (!onlyResults) {
                 document.getElementById('dwell-table-body').innerHTML = dwells.map((d, i) => `<tr><td class="text-center text-[10px]">#${i+1}</td><td><input type="number" step="0.5" value="${d.x}" oninput="updateDwell(${i}, 'x', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${d.y}" oninput="updateDwell(${i}, 'y', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${d.z}" oninput="updateDwell(${i}, 'z', this.value)" class="side-input"></td><td><input type="number" value="${d.time}" oninput="updateDwell(${i}, 'time', this.value)" class="side-input"></td><td class="text-center"><button onclick="removeDwell(${i})" class="text-slate-300 hover:text-red-500 font-bold">×</button></td></tr>`).join('');
-                document.getElementById('poi-table-body').innerHTML = pois.map((p, i) => `<tr><td class="text-center text-[11px]">P${p.id}</td><td><input type="number" step="0.5" value="${p.x}" oninput="updatePOI(${i}, 'x', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${p.y}" oninput="updatePOI(${i}, 'y', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${p.z}" oninput="updatePOI(${i}, 'z', this.value)" class="side-input"></td><td id="poi-res-dose-${p.id}" class="text-blue-600 font-bold text-center text-[12px]">${(p.totalDose === Infinity ? 'Inf' : (p.totalDose || 0).toFixed(3))}</td><td class="text-center"><button onclick="removePOI(${i})" class="text-slate-300 hover:text-red-500 font-bold">×</button></td></tr>`).join('');
+                document.getElementById('poi-table-body').innerHTML = pois.map((p, i) => `<tr><td class="text-center text-[10px]">P${p.id}</td><td><input type="number" step="0.5" value="${p.x}" oninput="updatePOI(${i}, 'x', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${p.y}" oninput="updatePOI(${i}, 'y', this.value)" class="side-input"></td><td><input type="number" step="0.5" value="${p.z}" oninput="updatePOI(${i}, 'z', this.value)" class="side-input"></td><td id="poi-res-dose-${p.id}" class="text-blue-600 font-bold text-center text-[12px]">${(p.totalDose === Infinity ? 'Inf' : (p.totalDose || 0).toFixed(3))}</td><td class="text-center"><button onclick="removePOI(${i})" class="text-slate-300 hover:text-red-500 font-bold">×</button></td></tr>`).join('');
             } else {
                 pois.forEach(p => { const el = document.getElementById(`poi-res-dose-${p.id}`); if (el) el.textContent = (p.totalDose === Infinity ? 'Inf' : (p.totalDose || 0).toFixed(3)); });
             }
@@ -1181,16 +1183,16 @@
             if (tableView === 'simple') {
                 ['Name', 'X (cm)', 'Y (cm)', 'Z (cm)', 'Total Dose (Gy)'].forEach(txt => { const th = document.createElement('th'); th.textContent = txt; thr.appendChild(th); });
             } else {
-                ['Name', 'Dwell', 'r (cm)', 'θ (°)', 'G_L', 'G_ref', 'g_L(r)', 'F(r,θ)', 'Dose (Gy)', 'Total Dose (Gy)'].forEach(txt => { const th = document.createElement('th'); th.textContent = txt; thr.appendChild(th); });
+                ['Name', 'Dwell', 'r (cm)', 'θ (°)', 'β (rad)', 'G_L', 'G_ref', 'g_L(r)', 'F(r,θ)', 'Dose (Gy)', 'Total Dose (Gy)'].forEach(txt => { const th = document.createElement('th'); th.textContent = txt; thr.appendChild(th); });
             }
             head.appendChild(thr);
             pois.forEach(p => {
-                if (tableView === 'simple') body.innerHTML += `<tr><td class="bg-slate-50 font-bold text-xs">${p.name||`P${p.id}`}</td><td>${p.x.toFixed(2)}</td><td>${p.y.toFixed(2)}</td><td>${p.z.toFixed(2)}</td><td class="font-bold text-blue-700">${(p.totalDose === Infinity ? 'Inf' : (p.totalDose || 0).toFixed(3))}</td></tr>`;
+                if (tableView === 'simple') body.innerHTML += `<tr><td class="bg-slate-50 font-bold text-xs">${p.name||`P${p.id}`}</td><td>${p.x.toFixed(2)}</td><td>${p.y.toFixed(2)}</td><td>${p.z.toFixed(2)}</td><td class="font-bold text-blue-700">${(p.totalDose === Infinity ? 'Inf' : p.totalDose.toFixed(3))}</td></tr>`;
                 else {
                     p.details.forEach((d, i) => {
                         let row = `<tr>`;
                         if (i === 0) row += `<td rowspan="${p.details.length}" class="bg-slate-50 font-bold text-xs border-r">${p.name||`P${p.id}`}</td>`;
-                        row += `<td>#${d.dwellIdx}</td><td>${d.r}</td><td>${d.theta}</td><td>${d.GL}</td><td>${d.Gref}</td><td>${d.gL}</td><td>${d.F}</td><td class="font-medium">${(d.dose === Infinity ? 'Inf' : d.dose.toFixed(3))}</td>`;
+                        row += `<td>#${d.dwellIdx}</td><td>${d.r}</td><td>${d.theta}</td><td>${d.beta}</td><td>${d.GL}</td><td>${d.Gref}</td><td>${d.gL}</td><td>${d.F}</td><td class="font-medium">${(d.dose === Infinity ? 'Inf' : d.dose.toFixed(3))}</td>`;
                         if (i === 0) row += `<td rowspan="${p.details.length}" class="font-bold text-blue-700 border-l">${(p.totalDose === Infinity ? 'Inf' : p.totalDose.toFixed(3))}</td>`;
                         row += `</tr>`;
                         body.innerHTML += row;
@@ -1223,12 +1225,12 @@
                     text += r.join("\t") + "\n";
                 }
             } else {
-                text = "Name\tDwell\tr (cm)\tθ (°)\tG_L\tG_ref\tg_L(r)\tF(r,θ)\tDose (Gy)\tTotal Dose (Gy)\n";
+                text = "Name\tDwell\tr (cm)\tθ (°)\tβ (rad)\tG_L\tG_ref\tg_L(r)\tF(r,θ)\tDose (Gy)\tTotal Dose (Gy)\n";
                 pois.forEach(p => {
                     p.details.forEach((d, i) => {
                         const name = i === 0 ? (p.name || `P${p.id}`) : "";
                         const total = i === 0 ? (p.totalDose === Infinity ? "Inf" : p.totalDose.toFixed(3)) : "";
-                        text += `${name}\t#${d.dwellIdx}\t${d.r}\t${d.theta}\t${d.GL}\t${d.Gref}\t${d.gL}\t${d.F}\t${d.dose === Infinity ? "Inf" : d.dose.toFixed(3)}\t${total}\n`;
+                        text += `${name}\t#${d.dwellIdx}\t${d.r}\t${d.theta}\t${d.beta}\t${d.GL}\t${d.Gref}\t${d.gL}\t${d.F}\t${d.dose === Infinity ? "Inf" : d.dose.toFixed(3)}\t${total}\n`;
                     });
                 });
             }
