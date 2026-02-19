@@ -1044,6 +1044,12 @@
                     if (!isNaN(yl)) { ctx.textAlign = 'right'; ctx.fillText(String(i), offsetX - 6, yl + 4); ctx.textAlign = 'center'; }
                 } 
             }
+                // --- unit 표시만 추가 ---
+			    ctx.fillStyle = '#334155'; ctx.font = '20px Arial'; 
+		        // X축 끝
+		        ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText('(cm)', width - 28, offsetY + 6);
+		        // Y축 위쪽
+		        ctx.save(); ctx.translate(offsetX+5, 14); ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText('(cm)', 0, 0); ctx.restore();
         }
 
         function drawSource(x, y, alpha = 1.0, orientation = {x: -1, y: 0, z: 0}) {
@@ -1062,7 +1068,7 @@
             const px = offsetX + x*scale, py = offsetY - y*scale;
             ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#2563eb'; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
             ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(name, px, py-8);
-            if (dose !== null) { const txt = (dose === Infinity) ? 'Inf' : dose.toFixed(3); ctx.font = '14px Arial'; ctx.translate(px+22, py-32); ctx.rotate(-Math.PI/4); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(-2,-14,ctx.measureText(txt).width+4,16); ctx.fillStyle = '#1e40af'; ctx.textAlign = 'left'; ctx.fillText(txt, 0, 0); }
+            if (dose !== null) { const txt = (dose === Infinity) ? 'Inf' : dose.toFixed(3); ctx.font = '14px Arial'; ctx.translate(px+14, py-12); ctx.rotate(-Math.PI/5); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(-2,-14,ctx.measureText(txt).width+4,16); ctx.fillStyle = '#1e40af'; ctx.textAlign = 'left'; ctx.fillText(txt, 0, 0); }
             ctx.restore();
         }
 
